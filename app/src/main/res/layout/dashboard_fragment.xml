@@ -101,10 +101,11 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/total_items"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:text="25"
+                    android:text="..."
                     android:textAlignment="center"
                     android:textColor="@color/orange"
                     android:textSize="20sp" />
@@ -112,6 +113,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/users_card"
             android:layout_width="155dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -128,17 +130,17 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
-                    android:text="New Users"
+                    android:text="All Users"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/total_users"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:text="25"
+                    android:text="..."
                     android:textAlignment="center"
                     android:textColor="@color/orange"
                     android:textSize="20sp" />

@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_dashboard_to_all_items"
             app:destination="@id/all_items" />
+        <action
+            android:id="@+id/action_dashboard_to_users"
+            app:destination="@id/users" />
     </fragment>
     <fragment
         android:id="@+id/all_items"
@@ -28,4 +31,9 @@
         android:name="com.bassem.shoppingadmin.ui.items.New_item"
         android:label="add_new_item_fragment"
         tools:layout="@layout/add_new_item_fragment" />
+    <fragment
+        android:id="@+id/users"
+        android:name="com.bassem.shoppingadmin.ui.users.Users"
+        android:label="users_fragment"
+        tools:layout="@layout/users_fragment" />
 </navigation>
