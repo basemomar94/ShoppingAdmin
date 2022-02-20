@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/dashboard">
+
+    <fragment
+        android:id="@+id/dashboard"
+        android:name="com.bassem.shoppingadmin.ui.dashboard.Dashboard"
+        android:label="dashboard_fragment"
+        tools:layout="@layout/dashboard_fragment" >
+        <action
+            android:id="@+id/action_dashboard_to_all_items"
+            app:destination="@id/all_items" />
+    </fragment>
+    <fragment
+        android:id="@+id/all_items"
+        android:name="com.bassem.shoppingadmin.ui.items.All_items"
+        android:label="all_items_fragment"
+        tools:layout="@layout/all_items_fragment" >
+        <action
+            android:id="@+id/action_all_items_to_new_item"
+            app:destination="@id/new_item" />
+    </fragment>
+    <fragment
+        android:id="@+id/new_item"
+        android:name="com.bassem.shoppingadmin.ui.items.New_item"
+        android:label="add_new_item_fragment"
+        tools:layout="@layout/add_new_item_fragment" />
+</navigation>
