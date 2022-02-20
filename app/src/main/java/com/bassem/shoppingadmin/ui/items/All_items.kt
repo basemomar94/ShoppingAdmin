@@ -87,7 +87,8 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
 
                             activity!!.runOnUiThread {
 
-                                itemsAdapter.notifyItemInserted(i)
+                              //  itemsAdapter.notifyItemInserted(i)
+                                itemsAdapter.notifyDataSetChanged()
                                 i++
                                 println("$i ==========${itemsList.size}")
                                 if (i==itemsList.size){
