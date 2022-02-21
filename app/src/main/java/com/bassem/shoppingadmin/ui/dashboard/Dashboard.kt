@@ -37,6 +37,9 @@ class Dashboard : Fragment(R.layout.dashboard_fragment) {
             findNavController().navigate(R.id.action_dashboard_to_users)
 
         }
+        binding!!.orders.setOnClickListener {
+            findNavController().navigate(R.id.action_dashboard_to_ordersList)
+        }
         total_Items()
         total_Users()
     }

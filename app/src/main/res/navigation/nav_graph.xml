@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_dashboard_to_users"
             app:destination="@id/users" />
+        <action
+            android:id="@+id/action_dashboard_to_ordersList"
+            app:destination="@id/ordersList" />
     </fragment>
     <fragment
         android:id="@+id/all_items"
@@ -36,4 +39,18 @@
         android:name="com.bassem.shoppingadmin.ui.users.Users"
         android:label="users_fragment"
         tools:layout="@layout/users_fragment" />
+    <fragment
+        android:id="@+id/ordersList"
+        android:name="com.bassem.shoppingadmin.ui.orders.OrdersList"
+        android:label="orders_fragment"
+        tools:layout="@layout/orders_fragment" >
+        <action
+            android:id="@+id/action_ordersList_to_tracking"
+            app:destination="@id/tracking" />
+    </fragment>
+    <fragment
+        android:id="@+id/tracking"
+        android:name="com.bassem.shoppingadmin.ui.orders.Tracking"
+        android:label="tracking_fragment"
+        tools:layout="@layout/tracking_fragment" />
 </navigation>
