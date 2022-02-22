@@ -38,7 +38,11 @@
         android:id="@+id/users"
         android:name="com.bassem.shoppingadmin.ui.users.Users"
         android:label="users_fragment"
-        tools:layout="@layout/users_fragment" />
+        tools:layout="@layout/users_fragment" >
+        <action
+            android:id="@+id/action_users_to_ordersList"
+            app:destination="@id/ordersList" />
+    </fragment>
     <fragment
         android:id="@+id/ordersList"
         android:name="com.bassem.shoppingadmin.ui.orders.OrdersList"

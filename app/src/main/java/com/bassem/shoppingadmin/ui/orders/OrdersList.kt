@@ -27,9 +27,16 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
     var _binding: OrdersFragmentBinding? = null
     val binding get() = _binding
     lateinit var db: FirebaseFirestore
+    var isUser = false
+    var userId: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         orderList = arrayListOf()
+        val bundle = this.arguments
+        if (bundle != null) {
+            isUser = bundle.getBoolean("isUser")
+            userId = bundle.getString("user")
+        }
 
 
     }
@@ -57,10 +64,15 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recycleSetup()
-        getOrders()
+        if (!isUser) {
+            getOrders()
+        } else {
+            getSingleUserOrders(userId!!)
+        }
 
 
     }
+
 
     fun recycleSetup() {
         orderAdapter = OrdersRecycleAdapter(orderList, this)
@@ -111,6 +123,35 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
             }
 
 
+    }
+
+    private fun getSingleUserOrders(user: String) {
+        db = FirebaseFirestore.getInstance()
+        db.collection("orders")
+            .orderBy("order_date", Query.Direction.DESCENDING).whereEqualTo("user_id", user).get()
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Thread(Runnable {
+                        var i = 0
+                        for (dc in it.result!!.documentChanges) {
+                            if (dc.type == DocumentChange.Type.ADDED) {
+                                orderList.add(dc.document.toObject(OrderClass::class.java))
+                                activity!!.runOnUiThread {
+                                    i++
+                                    orderAdapter.notifyDataSetChanged()
+                                    if (i == orderList.size) {
+                                        binding!!.ordersRV.visibility = View.VISIBLE
+                                        binding!!.loadingSpinner4.visibility = View.GONE
+                                    }
+                                }
+
+                            }
+                        }
+                    }).start()
+
+
+                }
+            }
     }
 
 }

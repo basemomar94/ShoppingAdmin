@@ -9,11 +9,21 @@ import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.models.UserClass
 
 class UsersAdapter(
-    val usersList: MutableList<UserClass>
+    val usersList: MutableList<UserClass>,
+    val listener: usersInterface
 ) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name = itemView.findViewById<TextView>(R.id.userName)
         val phone = itemView.findViewById<TextView>(R.id.userPhone)
+        val address = itemView.findViewById<TextView>(R.id.userAddress)
+
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                listener.orders(position)
+            }
+
+        }
 
     }
 
@@ -26,9 +36,16 @@ class UsersAdapter(
         val user = usersList[position]
         holder.name.text = user.name
         holder.phone.text = user.phone
+        holder.address.text = user.address
+
+
     }
 
     override fun getItemCount(): Int {
         return usersList.size
+    }
+
+    interface usersInterface {
+        fun orders(position: Int)
     }
 }
