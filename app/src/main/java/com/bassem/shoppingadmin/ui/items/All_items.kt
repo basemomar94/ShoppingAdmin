@@ -131,6 +131,16 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
         navController.navigate(R.id.action_all_items_to_new_item, bundle)
     }
 
+    override fun gotoOrders(position: Int) {
+        val bundle = Bundle()
+        val itemID = itemsList[position].id
+        bundle.putString("item", itemID)
+        bundle.putInt("filter", 2)
+        val navController = Navigation.findNavController(activity!!, R.id.fragmentContainerView)
+        navController.navigate(R.id.action_all_items_to_ordersList, bundle)
+
+    }
+
     fun stopShimmer() {
         binding!!.shimmerLayout.visibility = View.GONE
         binding!!.allItemsRV.visibility = View.VISIBLE

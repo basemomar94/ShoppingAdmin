@@ -114,13 +114,15 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                             db.collection("items").document(item.toString()).get()
                                 .addOnSuccessListener {
                                     val item = it.toObject(OrderedItem::class.java)
-                                    orderedList.add(item!!)
-                                    activity!!.runOnUiThread {
-                                        i++
-                                        orderedAdapter.notifyDataSetChanged()
-                                        if (i == (itemsList as List<*>).size) {
-                                            binding!!.trackLayout.visibility = View.VISIBLE
-                                            binding!!.loadingSpinner3.visibility = View.GONE
+                                    if (item != null) {
+                                        orderedList.add(item)
+                                        activity!!.runOnUiThread {
+                                            i++
+                                            orderedAdapter.notifyDataSetChanged()
+                                            if (i == (itemsList as List<*>).size) {
+                                                binding!!.trackLayout.visibility = View.VISIBLE
+                                                binding!!.loadingSpinner3.visibility = View.GONE
+                                            }
                                         }
                                     }
 

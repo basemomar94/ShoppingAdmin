@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_all_items_to_new_item"
             app:destination="@id/new_item" />
+        <action
+            android:id="@+id/action_all_items_to_ordersList"
+            app:destination="@id/ordersList" />
     </fragment>
     <fragment
         android:id="@+id/new_item"

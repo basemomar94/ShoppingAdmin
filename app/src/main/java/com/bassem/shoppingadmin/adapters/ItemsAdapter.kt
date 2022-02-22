@@ -35,6 +35,10 @@ class ItemsAdapter(
                 val position = adapterPosition
                 lisnter.edit(position)
             }
+            itemview.setOnClickListener {
+                val position = adapterPosition
+                lisnter.gotoOrders(position)
+            }
         }
 
     }
@@ -61,6 +65,7 @@ class ItemsAdapter(
     interface action {
         fun delete(position: Int)
         fun edit(position: Int)
+        fun gotoOrders(position: Int)
 
     }
 }

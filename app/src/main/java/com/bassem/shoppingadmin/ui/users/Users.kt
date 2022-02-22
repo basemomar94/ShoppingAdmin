@@ -49,7 +49,6 @@ class Users : Fragment(R.layout.users_fragment), UsersAdapter.usersInterface {
     }
 
 
-
     fun recycleSetup() {
         usersRV = view!!.findViewById(R.id.usersRv)
         usersAdapter = UsersAdapter(usersList, this)
@@ -75,7 +74,7 @@ class Users : Fragment(R.layout.users_fragment), UsersAdapter.usersInterface {
                                 i++
                                 usersAdapter.notifyDataSetChanged()
                                 if (i == usersList.size) {
-                                  stopLoading()
+                                    stopLoading()
 
                                 }
                             }
@@ -93,13 +92,13 @@ class Users : Fragment(R.layout.users_fragment), UsersAdapter.usersInterface {
         val id = usersList[position].id
         val bundle = Bundle()
         bundle.putString("user", id)
-        bundle.putBoolean("isUser", true)
+        bundle.putInt("filter", 1)
         val navController = Navigation.findNavController(activity!!, R.id.fragmentContainerView)
         usersList.clear()
         navController.navigate(R.id.action_users_to_ordersList, bundle)
     }
 
-    fun stopLoading(){
+    fun stopLoading() {
         binding!!.usersRv.visibility = View.VISIBLE
         binding!!.usersShimmer.visibility = View.GONE
     }
