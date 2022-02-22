@@ -42,6 +42,7 @@ class Dashboard : Fragment(R.layout.dashboard_fragment) {
         }
         total_Items()
         total_Users()
+        newOrders()
     }
 
     fun total_Items() {
@@ -61,6 +62,16 @@ class Dashboard : Fragment(R.layout.dashboard_fragment) {
             if (it.isSuccessful) {
                 val total = it.result!!.size()
                 binding!!.totalUsers.text = total.toString()
+            }
+        }
+    }
+
+    fun newOrders() {
+        db = FirebaseFirestore.getInstance()
+        db.collection("orders").whereEqualTo("status", "pending").get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val total = it.result!!.size()
+                binding!!.newOrders.text = total.toString()
             }
         }
     }

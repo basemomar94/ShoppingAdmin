@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +24,8 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
     lateinit var orderedAdapter: OrderedItemsAdapter
     lateinit var db: FirebaseFirestore
     var orderID: String? = null
+    var status: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         orderedList = arrayListOf()
@@ -42,8 +46,17 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding!!.radio.setOnCheckedChangeListener { group, checkedId ->
+            group.findViewById<AppCompatRadioButton>(checkedId)?.let { radioButton ->
+                status = radioButton.text.toString()
+            }
+
+        }
         recycleSetup()
         gettingItems()
+        binding!!.confirm.setOnClickListener {
+            updatestatus()
+        }
 
 
     }
@@ -123,6 +136,31 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
             }
         }
 
+    }
+
+    fun updatestatus() {
+        loading()
+        db = FirebaseFirestore.getInstance()
+        db.collection("orders").document(orderID!!).update("status", status)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    tracking(status!!)
+                    normal()
+                    Toast.makeText(context!!, "your order is $status now", Toast.LENGTH_LONG).show()
+                } else {
+                    normal()
+                }
+            }
+    }
+
+    fun loading() {
+        binding!!.confirm.visibility = View.GONE
+        binding!!.progressBar2.visibility = View.VISIBLE
+    }
+
+    fun normal() {
+        binding!!.confirm.visibility = View.VISIBLE
+        binding!!.progressBar2.visibility = View.GONE
     }
 
 

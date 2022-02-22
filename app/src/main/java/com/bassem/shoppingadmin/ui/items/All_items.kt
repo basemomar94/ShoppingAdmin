@@ -66,7 +66,7 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
     }
 
     fun recycleSetup() {
-        itemsAdapter = ItemsAdapter(itemsList, this,context!!)
+        itemsAdapter = ItemsAdapter(itemsList, this, context!!)
         recyclerView = view!!.findViewById(R.id.all_items_RV)
         recyclerView.apply {
             adapter = itemsAdapter
@@ -90,9 +90,8 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
                                 itemsAdapter.notifyDataSetChanged()
                                 i++
                                 println("$i ==========${itemsList.size}")
-                                if (i==itemsList.size){
-                                    binding!!.shimmerLayout.visibility=View.GONE
-                                    binding!!.allItemsRV.visibility=View.VISIBLE
+                                if (i == itemsList.size) {
+                                    stopShimmer()
                                 }
 
                             }
@@ -130,5 +129,10 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
         bundle.putBoolean("edit", true)
         val navController = Navigation.findNavController(activity!!, R.id.fragmentContainerView)
         navController.navigate(R.id.action_all_items_to_new_item, bundle)
+    }
+
+    fun stopShimmer() {
+        binding!!.shimmerLayout.visibility = View.GONE
+        binding!!.allItemsRV.visibility = View.VISIBLE
     }
 }
