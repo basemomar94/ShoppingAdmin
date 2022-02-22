@@ -22,6 +22,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
     lateinit var recyclerView: RecyclerView
     lateinit var orderedList: MutableList<OrderedItem>
     lateinit var orderedAdapter: OrderedItemsAdapter
+    lateinit var countList: MutableList<String>
     lateinit var db: FirebaseFirestore
     var orderID: String? = null
     var status: String? = null
@@ -29,6 +30,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         orderedList = arrayListOf()
+        countList = arrayListOf()
         val bundle = this.arguments
         if (bundle != null) {
             orderID = bundle.getString("order")
@@ -83,7 +85,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
 
     fun recycleSetup() {
         recyclerView = binding!!.trackingRV
-        orderedAdapter = OrderedItemsAdapter(orderedList, context!!)
+        orderedAdapter = OrderedItemsAdapter(orderedList, context!!, countList)
         recyclerView.apply {
             adapter = orderedAdapter
             layoutManager = LinearLayoutManager(context)
@@ -101,6 +103,14 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                     val name = it.result!!.get("name")
                     val address = it.result!!.get("address")
                     val phone = it.result!!.get("phone")
+                    val numberList = it.result!!.get("count")
+                    try {
+                        for (count in numberList as List<String>) {
+                            countList.add(count)
+                        }
+                    } catch (E: Exception) {
+                        println(E.message)
+                    }
                     binding!!.trackName.text = name.toString()
                     binding!!.trackAdress.text = address.toString()
                     binding!!.trackPhone.text = phone.toString()

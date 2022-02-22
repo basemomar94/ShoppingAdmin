@@ -13,7 +13,9 @@ import com.bumptech.glide.Glide
 
 class OrderedItemsAdapter(
     val orderedList: MutableList<OrderedItem>,
-    val context: Context
+    val context: Context,
+    val countList: MutableList<String>
+
 ) : RecyclerView.Adapter<OrderedItemsAdapter.ViewHolder>() {
 
 
@@ -21,6 +23,8 @@ class OrderedItemsAdapter(
         val photo = itemview.findViewById<ImageView>(R.id.orderedPhoto)
         val title = itemview.findViewById<TextView>(R.id.orderedTitle)
         val price=itemview.findViewById<TextView>(R.id.orderedPrice)
+        val count = itemview.findViewById<TextView>(R.id.orderedCount)
+
 
     }
 
@@ -33,6 +37,7 @@ class OrderedItemsAdapter(
         val ordered = orderedList[position]
         holder.title.text = ordered.title
         holder.price.text=ordered.price + " EGP"
+        holder.count.text = countList[position]
         val url = ordered.photo
         Glide.with(context).load(url).into(holder.photo)
     }
