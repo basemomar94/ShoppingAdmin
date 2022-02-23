@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.models.ItemClass
@@ -25,6 +26,7 @@ class ItemsAdapter(
         val delete = itemview.findViewById<ImageView>(R.id.delete)
         val edit = itemview.findViewById<ImageView>(R.id.edit)
         val photo = itemview.findViewById<ImageView>(R.id.itemPhoto)
+        val sold = itemview.findViewById<CardView>(R.id.soldCard)
 
         init {
             delete.setOnClickListener {
@@ -53,6 +55,10 @@ class ItemsAdapter(
         holder.title.text = item.title
         holder.amount.text = item.amount.toString()
         holder.price.text = "${item.price} EGP"
+        if (item.amount!! <= 0) {
+            holder.sold.visibility = View.VISIBLE
+        }
+
         val url = item.photo
         Glide.with(context).load(url).into(holder.photo)
 

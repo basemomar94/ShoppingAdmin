@@ -13,6 +13,7 @@ import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.adapters.OrderedItemsAdapter
 import com.bassem.shoppingadmin.databinding.TrackingFragmentBinding
 import com.bassem.shoppingadmin.models.OrderedItem
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kofigyan.stateprogressbar.StateProgressBar
 
@@ -72,7 +73,10 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
             stateDescriptionData.add(3, "Arrived")
             when (status) {
                 "pending" -> setCurrentStateNumber(StateProgressBar.StateNumber.ONE)
-                "confirmed" -> setCurrentStateNumber(StateProgressBar.StateNumber.TWO)
+                "confirmed" -> {
+                    setCurrentStateNumber(StateProgressBar.StateNumber.TWO)
+                    sub_item()
+                }
                 "shipped" -> setCurrentStateNumber(StateProgressBar.StateNumber.THREE)
                 "arrived" -> setCurrentStateNumber(StateProgressBar.StateNumber.FOUR)
             }
@@ -116,7 +120,6 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                     binding!!.trackPhone.text = phone.toString()
                     tracking(status.toString())
                     binding!!.total.text = total.toString() + " EGP"
-                    binding!!.subTotal.text = (total.toString().toInt() - 10).toString() + " EGP"
                     val itemsList = it.result!!.get("items")
                     if (itemsList != null) {
                         var i = 0
@@ -173,6 +176,15 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
     fun normal() {
         binding!!.confirm.visibility = View.VISIBLE
         binding!!.progressBar2.visibility = View.GONE
+    }
+
+    fun sub_item() {
+        db = FirebaseFirestore.getInstance()
+        orderedList.zip(countList).forEach { pair ->
+            db.collection("items").document(pair.first.id!!)
+                .update("amount", FieldValue.increment(-pair.second.toDouble()))
+
+        }
     }
 
 

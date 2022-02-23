@@ -22,8 +22,9 @@ class OrderedItemsAdapter(
     inner class ViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
         val photo = itemview.findViewById<ImageView>(R.id.orderedPhoto)
         val title = itemview.findViewById<TextView>(R.id.orderedTitle)
-        val price=itemview.findViewById<TextView>(R.id.orderedPrice)
+        val price = itemview.findViewById<TextView>(R.id.orderedPrice)
         val count = itemview.findViewById<TextView>(R.id.orderedCount)
+        val amount = itemview.findViewById<TextView>(R.id.orderedItemAmount)
 
 
     }
@@ -36,8 +37,9 @@ class OrderedItemsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val ordered = orderedList[position]
         holder.title.text = ordered.title
-        holder.price.text=ordered.price + " EGP"
+        holder.price.text = ordered.price + " EGP"
         holder.count.text = countList[position]
+        holder.amount.text = ordered.amount.toString()
         val url = ordered.photo
         Glide.with(context).load(url).into(holder.photo)
     }
