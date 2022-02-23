@@ -94,6 +94,7 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         detailsMap!!["price"] = price!!
         detailsMap!!["photo"] = imageUrl
         detailsMap!!["id"] = documentID
+        detailsMap!!["currentPrice"]=price!!
 
         //Edit Hashmap to avoid getting a new id
         val editHashMap = HashMap<String, Any>()
