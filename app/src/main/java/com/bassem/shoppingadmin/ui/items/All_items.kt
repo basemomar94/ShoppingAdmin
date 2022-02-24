@@ -58,6 +58,7 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
         itemsList.clear()
         Thread.interrupted()
 
+
     }
 
     override fun onResume() {

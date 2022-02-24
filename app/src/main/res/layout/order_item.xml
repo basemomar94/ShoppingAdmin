@@ -14,14 +14,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="4dp"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/statusCard"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
                 app:cardBackgroundColor="@color/teal_700">
 
                 <LinearLayout
@@ -34,6 +32,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_margin="2dp"
                         android:text="Pending"
                         android:textColor="@color/white"
                         android:textSize="16sp"
@@ -78,6 +77,7 @@
 
 
             </LinearLayout>
+
             <View
                 android:id="@+id/divider7"
                 android:layout_width="match_parent"

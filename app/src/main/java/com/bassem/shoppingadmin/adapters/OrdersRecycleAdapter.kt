@@ -18,9 +18,11 @@ import java.util.*
 import java.util.logging.Level.parse
 
 class OrdersRecycleAdapter(
-    val Orderslist: MutableList<OrderClass>,
+    var Orderslist: MutableList<OrderClass>,
     val lisnter: clickInterface
 ) : RecyclerView.Adapter<OrdersRecycleAdapter.ViewHolder>() {
+
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val placedDate = itemView.findViewById<TextView>(R.id.dateOrder)
         val status = itemView.findViewById<TextView>(R.id.statusOrder)
@@ -72,6 +74,13 @@ class OrdersRecycleAdapter(
 
         return Orderslist.size
     }
+
+    fun filter(filterList: MutableList<OrderClass>) {
+        Orderslist = filterList
+        notifyDataSetChanged()
+
+    }
+
 
     interface clickInterface {
         fun click(position: Int)

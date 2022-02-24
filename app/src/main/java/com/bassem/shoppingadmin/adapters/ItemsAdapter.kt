@@ -57,6 +57,9 @@ class ItemsAdapter(
         holder.price.text = "${item.price} EGP"
         if (item.amount!! <= 0) {
             holder.sold.visibility = View.VISIBLE
+        } else {
+            holder.sold.visibility = View.INVISIBLE
+
         }
 
         val url = item.photo

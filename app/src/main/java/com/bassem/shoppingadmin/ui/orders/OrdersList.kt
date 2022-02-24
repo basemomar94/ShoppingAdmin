@@ -15,6 +15,7 @@ import com.bassem.shoppingadmin.adapters.OrdersRecycleAdapter
 import com.bassem.shoppingadmin.databinding.OrdersFragmentBinding
 import com.bassem.shoppingadmin.models.OrderClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
@@ -112,8 +113,8 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
                                     i++
                                     orderAdapter.notifyDataSetChanged()
                                     if (i == orderList.size) {
-                                        binding!!.ordersRV.visibility = View.VISIBLE
-                                        binding!!.loadingSpinner4.visibility = View.GONE
+                                        filter()
+                                        normal()
                                     }
                                 }
 
@@ -143,8 +144,7 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
                                     i++
                                     orderAdapter.notifyDataSetChanged()
                                     if (i == orderList.size) {
-                                        binding!!.ordersRV.visibility = View.VISIBLE
-                                        binding!!.loadingSpinner4.visibility = View.GONE
+                                        normal()
                                     }
                                 }
 
@@ -173,8 +173,7 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
                                     i++
                                     orderAdapter.notifyDataSetChanged()
                                     if (i == orderList.size) {
-                                        binding!!.ordersRV.visibility = View.VISIBLE
-                                        binding!!.loadingSpinner4.visibility = View.GONE
+                                        normal()
                                     }
                                 }
 
@@ -185,6 +184,30 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
 
                 }
             }
+    }
+
+    fun normal() {
+        binding!!.ordersLayout.visibility = View.VISIBLE
+        binding!!.loadingSpinner4.visibility = View.GONE
+
+    }
+
+    fun filter() {
+        binding!!.chipButtons.setOnCheckedChangeListener { group, checkedId ->
+            val selectedChip: Chip = view!!.findViewById(checkedId)
+            val filter = selectedChip.text.toString()
+            val filterList : MutableList<OrderClass> = arrayListOf()
+            println(filterList.size)
+            for (order in orderList) {
+                println("${order.status}===============$filter")
+                if (order.status == filter) {
+                    filterList.add(order)
+                    println(order)
+
+                }
+            }
+           orderAdapter.filter(filterList)
+        }
     }
 
 }
