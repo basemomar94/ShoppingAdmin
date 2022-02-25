@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
@@ -14,9 +15,9 @@ import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.adapters.ItemsAdapter
 import com.bassem.shoppingadmin.databinding.AllItemsFragmentBinding
 import com.bassem.shoppingadmin.models.ItemClass
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.*
 
 class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
     var _binding: AllItemsFragmentBinding? = null
@@ -51,12 +52,24 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
             findNavController().navigate(R.id.action_all_items_to_new_item)
             itemsList.clear()
         }
+        binding!!.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                println(p0)
+
+                filterItems(p0.toString().lowercase())
+
+                return true
+            }
+        })
     }
 
     override fun onDetach() {
         super.onDetach()
         itemsList.clear()
-        Thread.interrupted()
 
 
     }
@@ -80,38 +93,27 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
         db = FirebaseFirestore.getInstance()
         db.collection("items").get().addOnCompleteListener {
             if (it.isSuccessful) {
-                Thread(Runnable {
-                    var i = 0
-                    for (dc: DocumentChange in it.result!!.documentChanges)
-                        if (dc.type == DocumentChange.Type.ADDED) {
-                            itemsList.add(dc.document.toObject(ItemClass::class.java))
+                var i = 0
+                for (dc: DocumentChange in it.result!!.documentChanges)
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        itemsList.add(dc.document.toObject(ItemClass::class.java))
 
-                            activity!!.runOnUiThread {
-
-                                itemsAdapter.notifyDataSetChanged()
-                                i++
-                                println("$i ==========${itemsList.size}")
-                                if (i == itemsList.size) {
-                                    stopShimmer()
-                                }
-
-                            }
-
+                        itemsAdapter.notifyDataSetChanged()
+                        i++
+                        println("$i ==========${itemsList.size}")
+                        if (i == itemsList.size) {
+                            stopShimmer()
                         }
-
-                }).start()
-
+                    }
             }
-
-
         }
 
     }
 
-    override fun delete(position: Int) {
-        val id = itemsList[position].id
+    override fun delete(position: Int, itemId: String) {
+
         db = FirebaseFirestore.getInstance()
-        db.collection("items").document(id!!).delete().addOnCompleteListener {
+        db.collection("items").document(itemId).delete().addOnCompleteListener {
             if (it.isSuccessful) {
                 itemsAdapter.notifyItemRemoved(position)
                 itemsList.removeAt(position)
@@ -123,19 +125,17 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
 
     }
 
-    override fun edit(position: Int) {
+    override fun edit(position: Int, itemId: String) {
         val bundle = Bundle()
-        val itemID = itemsList[position].id
-        bundle.putString("item", itemID)
+        bundle.putString("item", itemId)
         bundle.putBoolean("edit", true)
         val navController = Navigation.findNavController(activity!!, R.id.fragmentContainerView)
         navController.navigate(R.id.action_all_items_to_new_item, bundle)
     }
 
-    override fun gotoOrders(position: Int) {
+    override fun gotoOrders(position: Int, itemId: String) {
         val bundle = Bundle()
-        val itemID = itemsList[position].id
-        bundle.putString("item", itemID)
+        bundle.putString("item", itemId)
         bundle.putInt("filter", 2)
         val navController = Navigation.findNavController(activity!!, R.id.fragmentContainerView)
         navController.navigate(R.id.action_all_items_to_ordersList, bundle)
@@ -144,6 +144,21 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
 
     fun stopShimmer() {
         binding!!.shimmerLayout.visibility = View.GONE
-        binding!!.allItemsRV.visibility = View.VISIBLE
+        binding!!.allItemsLayout.visibility = View.VISIBLE
     }
+
+    fun filterItems(filter: String) {
+
+        val filterList: MutableList<ItemClass> = arrayListOf()
+        itemsList.forEach {
+            println("$filter ============== ${it.title}")
+            if (it.title!!.lowercase().contains(filter) || it.id!!.lowercase().contains(filter)) {
+                filterList.add(it)
+                println("${it.title} CONTAIN")
+            }
+            itemsAdapter.filter(filterList)
+        }
+
+    }
+
 }

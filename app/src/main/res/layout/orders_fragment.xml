@@ -23,6 +23,28 @@
         android:visibility="gone"
         tools:visibility="visible">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".2">
+
+            </SearchView>
+
+            <ImageView
+                android:id="@+id/showFilter"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_filter_alt_24" />
+
+        </LinearLayout>
+
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipButtons"
             android:layout_width="wrap_content"
@@ -30,17 +52,8 @@
             android:layout_gravity="center"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
+            android:visibility="gone"
             app:singleSelection="true">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/all"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="all"
-                android:textSize="12sp"
-                android:theme="@style/Theme.MaterialComponents.Light" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/pending"
@@ -50,7 +63,7 @@
                 android:minWidth="48dp"
                 android:minHeight="48dp"
                 android:text="pending"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:theme="@style/Theme.MaterialComponents.Light" />
 
             <com.google.android.material.chip.Chip
@@ -61,7 +74,17 @@
                 android:minWidth="48dp"
                 android:minHeight="48dp"
                 android:text="confirmed"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/shipped"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:text="shipped"
+                android:textSize="14sp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/arrived"
@@ -70,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:text="arrived"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:theme="@style/Theme.MaterialComponents.Light" />
 
             <com.google.android.material.chip.Chip
@@ -81,7 +104,7 @@
                 android:minWidth="48dp"
                 android:minHeight="48dp"
                 android:text="canceled"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:theme="@style/Theme.MaterialComponents.Light" />
 
         </com.google.android.material.chip.ChipGroup>

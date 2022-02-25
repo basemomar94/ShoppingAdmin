@@ -6,22 +6,24 @@
         <entry key="..\:/ShoppingAdmin/app/src/main/res/drawable/bttuon.xml" value="0.3828125" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.3828125" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.3828125" />
+        <entry key="..\:/ShoppingAdmin/app/src/main/res/drawable/ic_baseline_filter_alt_24.xml" value="0.3828125" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/drawable/ic_baseline_post_add_24.xml" value="0.3828125" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/activity_main.xml" value="0.20520833333333333" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/add_new_item_fragment.xml" value="0.2545289855072464" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/all_items_fragment.xml" value="0.2545289855072464" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/dashboard_fragment.xml" value="0.33" />
-        <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/item.xml" value="0.75" />
+        <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/item.xml" value="0.5784061696658098" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/item_orders.xml" value="0.17831813576494426" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/item_shimmer.xml" value="0.21105072463768115" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/order_item.xml" value="0.5" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/ordered_item.xml" value="0.22" />
-        <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/orders_fragment.xml" value="0.25" />
+        <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/orders_fragment.xml" value="0.33" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/tracking_fragment.xml" value="0.25" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/user.xml" value="0.33" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/user_shimmer.xml" value="0.21105072463768115" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/users_fragment.xml" value="0.17" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/users_shimmer.xml" value="0.21105072463768115" />
+        <entry key="..\:/ShoppingAdmin/app/src/main/res/menu/search_filter.xml" value="0.20520833333333333" />
       </map>
     </option>
   </component>

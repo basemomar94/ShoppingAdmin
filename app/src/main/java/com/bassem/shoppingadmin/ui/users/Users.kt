@@ -63,25 +63,21 @@ class Users : Fragment(R.layout.users_fragment), UsersAdapter.usersInterface {
         db = FirebaseFirestore.getInstance()
         db.collection("users").get().addOnCompleteListener {
             if (it.isSuccessful) {
-                Thread(Runnable {
-
-                    var i = 0
-                    println("inside $i")
-                    for (dc in it.result!!.documentChanges) {
-                        if (dc.type == DocumentChange.Type.ADDED) {
-                            usersList.add(dc.document.toObject(UserClass::class.java))
-                            activity!!.runOnUiThread {
-                                i++
-                                usersAdapter.notifyDataSetChanged()
-                                if (i == usersList.size) {
-                                    stopLoading()
-
-                                }
-                            }
+                var i = 0
+                println("inside $i")
+                for (dc in it.result!!.documentChanges) {
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        usersList.add(dc.document.toObject(UserClass::class.java))
+                        i++
+                        usersAdapter.notifyDataSetChanged()
+                        if (i == usersList.size) {
+                            stopLoading()
 
                         }
+
+
                     }
-                }).start()
+                }
 
             }
         }

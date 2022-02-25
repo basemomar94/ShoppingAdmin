@@ -34,7 +34,8 @@ class OrdersRecycleAdapter(
 
             itemView.setOnClickListener {
                 val position = adapterPosition
-                lisnter.click(position)
+                val orderId = Orderslist[position].order_id
+                lisnter.click(position, orderId!!)
             }
         }
 
@@ -83,6 +84,6 @@ class OrdersRecycleAdapter(
 
 
     interface clickInterface {
-        fun click(position: Int)
+        fun click(position: Int, order_id: String)
     }
 }

@@ -13,7 +13,7 @@ import com.bassem.shoppingadmin.models.ItemClass
 import com.bumptech.glide.Glide
 
 class ItemsAdapter(
-    val itemsList: MutableList<ItemClass>,
+    var itemsList: MutableList<ItemClass>,
     val lisnter: action,
     val context: Context
 ) : RecyclerView.Adapter<ItemsAdapter.ViewHolder>() {
@@ -31,15 +31,18 @@ class ItemsAdapter(
         init {
             delete.setOnClickListener {
                 val position = adapterPosition
-                lisnter.delete(position)
+                val itemId = itemsList[position].id
+                lisnter.delete(position, itemId!!)
             }
             edit.setOnClickListener {
                 val position = adapterPosition
-                lisnter.edit(position)
+                val itemId = itemsList[position].id
+                lisnter.edit(position, itemId!!)
             }
             itemview.setOnClickListener {
                 val position = adapterPosition
-                lisnter.gotoOrders(position)
+                val itemId = itemsList[position].id
+                lisnter.gotoOrders(position, itemId!!)
             }
         }
 
@@ -71,10 +74,15 @@ class ItemsAdapter(
         return itemsList.size
     }
 
+    fun filter(filterList: MutableList<ItemClass>) {
+        itemsList = filterList
+        notifyDataSetChanged()
+    }
+
     interface action {
-        fun delete(position: Int)
-        fun edit(position: Int)
-        fun gotoOrders(position: Int)
+        fun delete(position: Int, itemId: String)
+        fun edit(position: Int, itemId: String)
+        fun gotoOrders(position: Int, itemId: String)
 
     }
 }
