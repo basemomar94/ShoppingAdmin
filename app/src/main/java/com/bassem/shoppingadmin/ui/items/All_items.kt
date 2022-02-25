@@ -1,9 +1,7 @@
 package com.bassem.shoppingadmin.ui.items
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -19,7 +17,8 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 
-class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
+class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
+    SearchView.OnQueryTextListener {
     var _binding: AllItemsFragmentBinding? = null
     val binding get() = _binding
     lateinit var recyclerView: RecyclerView
@@ -29,8 +28,18 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         itemsList = arrayListOf()
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.search_filter, menu)
+        val search = menu.findItem(R.id.app_bar_search)
+        val filter = menu.findItem(R.id.appbarFilter)
+        val SearchView = search.actionView as SearchView
+        SearchView.setOnQueryTextListener(this)
     }
 
     override fun onCreateView(
@@ -52,19 +61,7 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
             findNavController().navigate(R.id.action_all_items_to_new_item)
             itemsList.clear()
         }
-        binding!!.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(p0: String?): Boolean {
-                return false
-            }
 
-            override fun onQueryTextChange(p0: String?): Boolean {
-                println(p0)
-
-                filterItems(p0.toString().lowercase())
-
-                return true
-            }
-        })
     }
 
     override fun onDetach() {
@@ -159,6 +156,15 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action {
             itemsAdapter.filter(filterList)
         }
 
+    }
+
+    override fun onQueryTextSubmit(p0: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(p0: String?): Boolean {
+        filterItems(p0.toString().lowercase())
+        return true
     }
 
 }

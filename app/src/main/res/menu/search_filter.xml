@@ -9,7 +9,8 @@
         app:showAsAction="always"
         app:actionViewClass="android.widget.SearchView" ></item>
     <item
+        android:id="@+id/appbarFilter"
         android:icon="@drawable/ic_baseline_filter_alt_24"
-        app:showAsAction="always"
-        android:title="appbarFilter" />
+        android:title="appbarFilter"
+        app:showAsAction="always" />
 </menu>

@@ -58,13 +58,10 @@ class OrdersRecycleAdapter(
         holder.placedDate.text = date.toString()
         val status = item.status
         when (status) {
-            "pending" -> {
-                holder.card.setCardBackgroundColor(Color.YELLOW)
-                holder.status.setTextColor(Color.BLACK)
-            }
-            "confirmed" -> holder.card.setCardBackgroundColor(Color.BLUE)
-            "shipped" -> holder.card.setCardBackgroundColor(Color.CYAN)
-            "arrived" -> holder.card.setCardBackgroundColor(Color.GREEN)
+            "pending" -> holder.card.setCardBackgroundColor(Color.parseColor("#F39C12"))
+            "confirmed" -> holder.card.setCardBackgroundColor(Color.parseColor("#00C0EF"))
+            "shipped" -> holder.card.setCardBackgroundColor(Color.parseColor("#1E91CF"))
+            "arrived" -> holder.card.setCardBackgroundColor(Color.parseColor("#4CB64C"))
         }
         holder.status.text = status
         holder.number.text = item.order_id

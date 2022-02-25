@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bassem.shoppingadmin.R
@@ -162,6 +163,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                     tracking(status!!)
                     normal()
                     Toast.makeText(context!!, "your order is $status now", Toast.LENGTH_LONG).show()
+                    findNavController().navigateUp()
                 } else {
                     normal()
                 }
@@ -178,6 +180,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
         binding!!.progressBar2.visibility = View.GONE
     }
 
+    // to decrease items from the total amount of items
     fun sub_item() {
         db = FirebaseFirestore.getInstance()
         orderedList.zip(countList).forEach { pair ->
