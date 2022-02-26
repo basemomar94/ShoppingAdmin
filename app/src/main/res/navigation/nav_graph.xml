@@ -19,6 +19,12 @@
         <action
             android:id="@+id/action_dashboard_to_ordersList"
             app:destination="@id/ordersList" />
+        <action
+            android:id="@+id/action_dashboard_to_coponsFragment"
+            app:destination="@id/coponsFragment" />
+        <action
+            android:id="@+id/action_dashboard_to_newCopon2"
+            app:destination="@id/newCopon2" />
     </fragment>
     <fragment
         android:id="@+id/all_items"
@@ -60,4 +66,18 @@
         android:name="com.bassem.shoppingadmin.ui.orders.Tracking"
         android:label="tracking_fragment"
         tools:layout="@layout/tracking_fragment" />
+    <fragment
+        android:id="@+id/coponsFragment"
+        android:name="com.bassem.shoppingadmin.ui.copons.CouponsFragment"
+        android:label="copons_fragment"
+        tools:layout="@layout/copons_fragment" >
+        <action
+            android:id="@+id/action_coponsFragment_to_newCopon2"
+            app:destination="@id/newCopon2" />
+    </fragment>
+    <fragment
+        android:id="@+id/newCopon2"
+        android:name="com.bassem.shoppingadmin.ui.copons.NewCoupon"
+        android:label="add_copon"
+        tools:layout="@layout/add_copon" />
 </navigation>

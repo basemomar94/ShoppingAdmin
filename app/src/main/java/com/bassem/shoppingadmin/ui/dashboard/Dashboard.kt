@@ -40,6 +40,9 @@ class Dashboard : Fragment(R.layout.dashboard_fragment) {
         binding!!.orders.setOnClickListener {
             findNavController().navigate(R.id.action_dashboard_to_ordersList)
         }
+        binding!!.coponsCard.setOnClickListener {
+            findNavController().navigate(R.id.action_dashboard_to_coponsFragment)
+        }
         total_Items()
         total_Users()
         newOrders()
