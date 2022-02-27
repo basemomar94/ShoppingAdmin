@@ -18,6 +18,9 @@ import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kofigyan.stateprogressbar.StateProgressBar
+import com.squareup.okhttp.*
+import org.json.JSONException
+import org.json.JSONObject
 
 class Tracking : Fragment(R.layout.tracking_fragment) {
     var _binding: TrackingFragmentBinding? = null
@@ -29,6 +32,8 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
     lateinit var db: FirebaseFirestore
     var orderID: String? = null
     var status: String? = null
+    lateinit var token: String
+    lateinit var name: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,10 +61,9 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
 
         binding!!.trackChip.setOnCheckedChangeListener { group, checkedId ->
             println(checkedId)
-            if (checkedId>0){
+            if (checkedId > 0) {
                 val chip: Chip = view.findViewById(checkedId)
                 status = chip.text.toString()
-                println(status)
             }
 
         }
@@ -88,6 +92,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                 "shipped" -> setCurrentStateNumber(StateProgressBar.StateNumber.THREE)
                 "arrived" -> setCurrentStateNumber(StateProgressBar.StateNumber.FOUR)
             }
+            sendNotification(name, status)
 
 
         }
@@ -112,13 +117,14 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                 val total = it.result!!.get("cost")
                 val subtotal = it.result!!.get("subcost")
                 val discount = it.result!!.get("discount")
+                token = it.result!!.getString("token")!!
                 println(discount)
                 if (discount == null) {
                     binding!!.discountLayout.visibility = View.GONE
                 }
                 val shipping = it.result!!.get("delivery")
                 val status = it.result!!.get("status")
-                val name = it.result!!.get("name")
+                name = it.result!!.get("name").toString()
                 val address = it.result!!.get("address")
                 val phone = it.result!!.get("phone")
                 val numberList = it.result!!.get("count")
@@ -201,6 +207,36 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                 .update("amount", FieldValue.increment(-pair.second.toDouble()))
 
         }
+    }
+
+    fun sendNotification(name: String, update: String) {
+        val servertoken: String =
+            "key=AAAA8wp6gvE:APA91bGkhZC4jPFfmqTiExrbYIi8-hdgqq1W9cC7EC0CMGRUM37o0a36nez9cQI4LKgNQ2Pc1VrBhL9Y04koZsZ97JCXnrctVYmYiI3LUYWZ2egnLHoxgnOGVn2wJmv_Xv0VU2ynnvGN"
+
+        val jsonObject: JSONObject = JSONObject()
+        try {
+            jsonObject.put("to", token)
+            val notification: JSONObject = JSONObject()
+
+            notification.put("title", "Hello $name")
+            notification.put("body", "Your order is $update")
+            jsonObject.put("notification", notification)
+        } catch (e: JSONException) {
+            println(e.message)
+        }
+
+        val mediaType: MediaType = MediaType.parse("application/json")
+        val client: OkHttpClient = OkHttpClient()
+        var body: RequestBody = RequestBody.create(mediaType, jsonObject.toString())
+        val request: Request? =
+            Request.Builder().url("https://fcm.googleapis.com/fcm/send").method("POST", body)
+                .addHeader("Authorization", servertoken)
+                .addHeader("Content-Type", "application/json").build()
+        Thread(Runnable {
+            val response: Response = client.newCall(request).execute()
+            println("response=========================================${response.message()}")
+        }).start()
+
     }
 
 
