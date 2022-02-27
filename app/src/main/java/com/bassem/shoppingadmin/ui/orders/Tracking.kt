@@ -53,7 +53,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
         super.onViewCreated(view, savedInstanceState)
 
 
-        }
+
         binding!!.trackChip.setOnCheckedChangeListener { group, checkedId ->
             println(checkedId)
             if (checkedId>0){
