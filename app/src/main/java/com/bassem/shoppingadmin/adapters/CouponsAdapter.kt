@@ -12,15 +12,32 @@ import com.bassem.shoppingadmin.models.CouponsClass
 import kotlinx.android.synthetic.main.item.view.*
 
 class CouponsAdapter(
-    var couponsList: MutableList<CouponsClass>
+    var couponsList: MutableList<CouponsClass>,
+    val listner: onClickinterface
 ) : RecyclerView.Adapter<CouponsAdapter.ViewHolder>() {
 
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @SuppressLint("UseSwitchCompatOrMaterialCode")
         val switch = itemView.findViewById<Switch>(R.id.switch1)
         val name = itemView.findViewById<TextView>(R.id.coponName)
         val usersCount = itemView.findViewById<TextView>(R.id.usersCount)
+
+        init {
+            switch.setOnClickListener {
+                val position = adapterPosition
+                val coupon = couponsList[position].id
+                switch.setOnClickListener {
+                    if (switch.isChecked) {
+                        listner.switchOFF(coupon!!, position)
+                    } else {
+                        listner.switchOn(coupon!!, position)
+                    }
+                }
+            }
+
+        }
+
 
     }
 
@@ -33,7 +50,7 @@ class CouponsAdapter(
         val coupon = couponsList[position]
         holder.name.text = coupon.title
         holder.usersCount.text = coupon.usingCount.toString()
-     if (coupon.valid!!) {
+        if (coupon.valid!!) {
             holder.switch.isChecked = true
             holder.switch.text = "Active"
         } else {
@@ -41,9 +58,17 @@ class CouponsAdapter(
             holder.switch.text = "inactive"
         }
 
+
     }
 
     override fun getItemCount(): Int {
         return couponsList.size
+    }
+
+    interface onClickinterface {
+        fun switchOn(item: String, position: Int)
+        fun switchOFF(item: String, position: Int)
+
+
     }
 }

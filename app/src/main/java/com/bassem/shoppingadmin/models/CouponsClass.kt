@@ -7,5 +7,7 @@ data class CouponsClass(
     val expireDate: String? = null,
     val usingCount: Int? = null,
     val maxUsers: Int? = null,
-    val amount: Int? = null
+    val amount: Int? = null,
+    val orders: List<String>? = null,
+    val id: String? = null
 )

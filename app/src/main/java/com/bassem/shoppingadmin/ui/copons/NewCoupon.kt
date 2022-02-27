@@ -13,6 +13,8 @@ import androidx.navigation.fragment.findNavController
 import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.databinding.AddCoponBinding
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.*
+import kotlin.collections.HashMap
 
 class NewCoupon : Fragment(R.layout.add_copon) {
     var _binding: AddCoponBinding? = null
@@ -21,6 +23,8 @@ class NewCoupon : Fragment(R.layout.add_copon) {
     lateinit var db: FirebaseFirestore
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        db = FirebaseFirestore.getInstance()
+
     }
 
     override fun onCreateView(
@@ -46,32 +50,35 @@ class NewCoupon : Fragment(R.layout.add_copon) {
             dialog.show()
         }
         binding!!.addcoupon.setOnClickListener {
-            addCopton(getInputs())
+            val idCoupon = UUID.randomUUID().toString()
+            addCopton(getInputs(idCoupon), idCoupon)
         }
 
 
     }
 
-    fun getInputs(): HashMap<String, Any> {
+    fun getInputs(randomId: String): HashMap<String, Any> {
         val title = binding!!.coponKey.text.toString().lowercase().trim()
         val amount = binding!!.coponAmount.text.toString().trim().toInt()
         val maxUsers = binding!!.coponMax.text.toString().lowercase().trim().toInt()
         val expireDate = binding!!.validityDate.text.toString().trim()
         val dataHashMap: HashMap<String, Any> = hashMapOf()
+        val ordersList = arrayListOf<String>()
         dataHashMap["title"] = title
         dataHashMap["amount"] = amount
         dataHashMap["maxUsers"] = maxUsers
         dataHashMap["expireDate"] = expireDate
         dataHashMap["valid"] = true
         dataHashMap["usingCount"] = 0
+        dataHashMap["orders"] = ordersList
+        dataHashMap["id"] = randomId
         return dataHashMap
 
     }
 
-    fun addCopton(data: HashMap<String, Any>) {
+    fun addCopton(data: HashMap<String, Any>, randomId: String) {
         loading()
-        db = FirebaseFirestore.getInstance()
-        db.collection("coupons").add(data).addOnCompleteListener {
+        db.collection("coupons").document(randomId).set(data).addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(requireContext(), "Coupon is added", Toast.LENGTH_SHORT).show()
                 findNavController().navigateUp()

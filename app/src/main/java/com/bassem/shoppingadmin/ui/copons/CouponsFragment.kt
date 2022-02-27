@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +16,7 @@ import com.bassem.shoppingadmin.models.CouponsClass
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 
-class CouponsFragment : Fragment(R.layout.copons_fragment) {
+class CouponsFragment : Fragment(R.layout.copons_fragment), CouponsAdapter.onClickinterface {
     var _binding: CoponsFragmentBinding? = null
     val binding get() = _binding
     lateinit var recyclerView: RecyclerView
@@ -39,17 +40,20 @@ class CouponsFragment : Fragment(R.layout.copons_fragment) {
         super.onViewCreated(view, savedInstanceState)
         binding!!.addnewCopon.setOnClickListener {
             findNavController().navigate(R.id.action_coponsFragment_to_newCopon2)
-            val valid = couponsList[0].valid
-            println(valid)
         }
         recycleviewSetup()
-        gettingCoupons()
+        if (couponsList.isEmpty()) {
+            gettingCoupons()
+        } else {
+            couponsList.clear()
+            gettingCoupons()
+        }
 
     }
 
     fun recycleviewSetup() {
         recyclerView = binding!!.coyponsRv
-        couponsAdapter = CouponsAdapter(couponsList)
+        couponsAdapter = CouponsAdapter(couponsList, this)
         recyclerView.apply {
             adapter = couponsAdapter
             setHasFixedSize(true)
@@ -70,5 +74,30 @@ class CouponsFragment : Fragment(R.layout.copons_fragment) {
                 }
             }
         }
+    }
+
+
+    override fun switchOn(item: String, position: Int) {
+        couponsAdapter.notifyItemChanged(position)
+        val status = couponsList[position].valid
+        println(status)
+        changeActiviation(item, true)
+
+    }
+
+    override fun switchOFF(item: String, position: Int) {
+        couponsAdapter.notifyItemChanged(position)
+        val status = couponsList[position].valid
+        println(status)
+        changeActiviation(item, false)
+    }
+
+    fun changeActiviation(item: String, status: Boolean) {
+        db.collection("coupons").document(item).update("valid", status).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Toast.makeText(requireContext(), "coupon is updated", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 }

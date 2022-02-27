@@ -14,6 +14,7 @@ import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.adapters.OrderedItemsAdapter
 import com.bassem.shoppingadmin.databinding.TrackingFragmentBinding
 import com.bassem.shoppingadmin.models.OrderedItem
+import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kofigyan.stateprogressbar.StateProgressBar
@@ -50,9 +51,15 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding!!.radio.setOnCheckedChangeListener { group, checkedId ->
-            group.findViewById<AppCompatRadioButton>(checkedId)?.let { radioButton ->
-                status = radioButton.text.toString()
+
+
+        }
+        binding!!.trackChip.setOnCheckedChangeListener { group, checkedId ->
+            println(checkedId)
+            if (checkedId>0){
+                val chip: Chip = view.findViewById(checkedId)
+                status = chip.text.toString()
+                println(status)
             }
 
         }
@@ -102,52 +109,58 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
         db = FirebaseFirestore.getInstance()
         db.collection("orders").document(orderID!!).get().addOnCompleteListener {
             if (it.isSuccessful) {
-                Thread(Runnable {
-                    val total = it.result!!.get("cost")
-                    val status = it.result!!.get("status")
-                    val name = it.result!!.get("name")
-                    val address = it.result!!.get("address")
-                    val phone = it.result!!.get("phone")
-                    val numberList = it.result!!.get("count")
-                    try {
-                        for (count in numberList as List<String>) {
-                            countList.add(count)
-                        }
-                    } catch (E: Exception) {
-                        println(E.message)
+                val total = it.result!!.get("cost")
+                val subtotal = it.result!!.get("subcost")
+                val discount = it.result!!.get("discount")
+                println(discount)
+                if (discount == null) {
+                    binding!!.discountLayout.visibility = View.GONE
+                }
+                val shipping = it.result!!.get("delivery")
+                val status = it.result!!.get("status")
+                val name = it.result!!.get("name")
+                val address = it.result!!.get("address")
+                val phone = it.result!!.get("phone")
+                val numberList = it.result!!.get("count")
+                try {
+                    for (count in numberList as List<String>) {
+                        countList.add(count)
                     }
-                    binding!!.trackName.text = name.toString()
-                    binding!!.trackAdress.text = address.toString()
-                    binding!!.trackPhone.text = phone.toString()
-                    tracking(status.toString())
-                    binding!!.total.text = total.toString() + " EGP"
-                    val itemsList = it.result!!.get("items")
-                    if (itemsList != null) {
-                        var i = 0
-                        for (item in itemsList as List<*>) {
-                            db.collection("items").document(item.toString()).get()
-                                .addOnSuccessListener {
-                                    val item = it.toObject(OrderedItem::class.java)
-                                    if (item != null) {
-                                        orderedList.add(item)
-                                        activity!!.runOnUiThread {
-                                            i++
-                                            orderedAdapter.notifyDataSetChanged()
-                                            if (i == (itemsList as List<*>).size) {
-                                                binding!!.trackLayout.visibility = View.VISIBLE
-                                                binding!!.loadingSpinner3.visibility = View.GONE
-                                            }
-                                        }
+                } catch (E: Exception) {
+                    println(E.message)
+                }
+                binding!!.trackName.text = name.toString()
+                binding!!.trackAdress.text = address.toString()
+                binding!!.trackPhone.text = phone.toString()
+                tracking(status.toString())
+                binding!!.total.text = total.toString() + " EGP"
+                binding!!.discount.text = "-$discount EGP"
+                binding!!.subTotal.text = "$subtotal EGP"
+                binding!!.shipping.text = "$shipping EGP"
+                val itemsList = it.result!!.get("items")
+                if (itemsList != null) {
+                    var i = 0
+                    for (item in itemsList as List<*>) {
+                        db.collection("items").document(item.toString()).get()
+                            .addOnSuccessListener {
+                                val item = it.toObject(OrderedItem::class.java)
+                                if (item != null) {
+                                    orderedList.add(item)
+                                    i++
+                                    orderedAdapter.notifyDataSetChanged()
+                                    if (i == (itemsList as List<*>).size) {
+                                        binding!!.trackLayout.visibility = View.VISIBLE
+                                        binding!!.loadingSpinner3.visibility = View.GONE
                                     }
-
 
                                 }
 
 
-                        }
-                    }
+                            }
 
-                }).start()
+
+                    }
+                }
 
             }
         }
