@@ -54,31 +54,25 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recycleSetup()
-        gettingData()
+        if (itemsList.isEmpty()) {
+            gettingData()
+
+        } else {
+            itemsList.clear()
+            gettingData()
+        }
 
 
         binding!!.floatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.action_all_items_to_new_item)
-            itemsList.clear()
         }
 
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        itemsList.clear()
-
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        itemsList.clear()
-    }
 
     fun recycleSetup() {
-        itemsAdapter = ItemsAdapter(itemsList, this, context!!)
-        recyclerView = view!!.findViewById(R.id.all_items_RV)
+        itemsAdapter = ItemsAdapter(itemsList, this, requireContext())
+        recyclerView = requireView().findViewById(R.id.all_items_RV)
         recyclerView.apply {
             adapter = itemsAdapter
             layoutManager = LinearLayoutManager(context)
@@ -107,15 +101,15 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
 
     }
 
-    override fun delete(position: Int, itemId: String) {
+    override fun delete(position: Int, itemId: String, item: ItemClass) {
 
         db = FirebaseFirestore.getInstance()
         db.collection("items").document(itemId).delete().addOnCompleteListener {
             if (it.isSuccessful) {
                 itemsAdapter.notifyItemRemoved(position)
-                itemsList.removeAt(position)
+                itemsList.remove(item)
             } else {
-                Toast.makeText(context!!, it.exception.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), it.exception.toString(), Toast.LENGTH_LONG).show()
             }
         }
 
@@ -126,7 +120,8 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
         val bundle = Bundle()
         bundle.putString("item", itemId)
         bundle.putBoolean("edit", true)
-        val navController = Navigation.findNavController(activity!!, R.id.fragmentContainerView)
+        val navController =
+            Navigation.findNavController(requireActivity(), R.id.fragmentContainerView)
         navController.navigate(R.id.action_all_items_to_new_item, bundle)
     }
 
@@ -134,10 +129,30 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
         val bundle = Bundle()
         bundle.putString("item", itemId)
         bundle.putInt("filter", 2)
-        val navController = Navigation.findNavController(activity!!, R.id.fragmentContainerView)
+        val navController =
+            Navigation.findNavController(requireActivity(), R.id.fragmentContainerView)
         navController.navigate(R.id.action_all_items_to_ordersList, bundle)
 
     }
+
+    override fun hide(position: Int, itemId: String, item: ItemClass, shown: Boolean) {
+        item.visible = !item.visible!!
+        if (shown) {
+            showHideItem(itemId, false)
+        } else {
+            showHideItem(itemId, true)
+        }
+        itemsAdapter.notifyItemChanged(position)
+    }
+
+    private fun showHideItem(itemId: String, status: Boolean) {
+        db.collection("items").document(itemId).update("visible", status).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Toast.makeText(requireContext(), "item is updated", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     fun stopShimmer() {
         binding!!.shimmerLayout.visibility = View.GONE

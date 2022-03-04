@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bassem.shoppingadmin.R
@@ -27,12 +28,14 @@ class ItemsAdapter(
         val edit = itemview.findViewById<ImageView>(R.id.edit)
         val photo = itemview.findViewById<ImageView>(R.id.itemPhoto)
         val sold = itemview.findViewById<CardView>(R.id.soldCard)
+        val hide = itemview.findViewById<ImageView>(R.id.hide)
 
         init {
             delete.setOnClickListener {
                 val position = adapterPosition
                 val itemId = itemsList[position].id
-                lisnter.delete(position, itemId!!)
+                val item = itemsList[position]
+                lisnter.delete(position, itemId!!, item)
             }
             edit.setOnClickListener {
                 val position = adapterPosition
@@ -43,6 +46,14 @@ class ItemsAdapter(
                 val position = adapterPosition
                 val itemId = itemsList[position].id
                 lisnter.gotoOrders(position, itemId!!)
+            }
+
+            hide.setOnClickListener {
+                val position = adapterPosition
+                val itemId = itemsList[position].id
+                val item: ItemClass = itemsList[position]
+                val shown = itemsList[position].visible
+                lisnter.hide(position, itemId!!, item, shown!!)
             }
         }
 
@@ -58,6 +69,9 @@ class ItemsAdapter(
         holder.title.text = item.title
         holder.amount.text = item.amount.toString()
         holder.price.text = "${item.price} EGP"
+        val seen = AppCompatResources.getDrawable(context, R.drawable.visible)
+        val hiden =
+            AppCompatResources.getDrawable(context, R.drawable.invisible)
         if (item.amount!! <= 0) {
             holder.sold.visibility = View.VISIBLE
         } else {
@@ -68,7 +82,13 @@ class ItemsAdapter(
         val url = item.photo
         Glide.with(context).load(url).into(holder.photo)
 
+        if (item.visible!!) {
+            holder.hide.setImageDrawable(seen)
+        } else {
+            holder.hide.setImageDrawable(hiden)
+        }
     }
+
 
     override fun getItemCount(): Int {
         return itemsList.size
@@ -80,9 +100,11 @@ class ItemsAdapter(
     }
 
     interface action {
-        fun delete(position: Int, itemId: String)
+        fun delete(position: Int, itemId: String, item: ItemClass)
         fun edit(position: Int, itemId: String)
         fun gotoOrders(position: Int, itemId: String)
+        fun hide(position: Int, itemId: String, item: ItemClass, shown: Boolean)
+
 
     }
 }

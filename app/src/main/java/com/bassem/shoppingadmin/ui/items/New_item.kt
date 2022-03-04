@@ -17,25 +17,23 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import java.util.*
-import kotlin.collections.HashMap
 
 class New_item : Fragment(R.layout.add_new_item_fragment) {
     var _binding: AddNewItemFragmentBinding? = null
     val binding get() = _binding
-    lateinit var db: FirebaseFirestore
+    private lateinit var db: FirebaseFirestore
     lateinit var title: String
-    var price: String? = null
-    var amount: Int? = null
-    var imageUri: Uri? = null
-    lateinit var documentID: String
-    val REQUEST_CODE = 1
-    var detailsMap: HashMap<String, Any>? = null
+    private var price: String? = null
+    private var details: String? = null
+    private var amount: Int? = null
+    private var imageUri: Uri? = null
+    private lateinit var documentID: String
+    private val REQUEST_CODE = 1
+    private var detailsMap: HashMap<String, Any>? = null
     var edit: Boolean = false
     lateinit var itemId: String
     var firebaseUrl: String? = null
-    lateinit var mListener: EventListener
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +51,7 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = AddNewItemFragmentBinding.inflate(inflater, container, false)
         return binding!!.root
     }
@@ -87,6 +85,7 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         title = binding!!.itemTitle.text!!.trim().toString()
         amount = binding!!.itemAmount.text.toString().toInt()
         price = binding!!.itemPrice.text.toString()
+        details = binding!!.itemDetails.text.toString()
         documentID = UUID.randomUUID().toString()
         detailsMap = hashMapOf()
         detailsMap!!["title"] = title
@@ -94,7 +93,9 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         detailsMap!!["price"] = price!!
         detailsMap!!["photo"] = imageUrl
         detailsMap!!["id"] = documentID
-        detailsMap!!["currentPrice"]=price!!
+        detailsMap!!["currentPrice"] = price!!
+        detailsMap!!["details"]=details!!
+        detailsMap!!["visible"] = true
 
         //Edit Hashmap to avoid getting a new id
         val editHashMap = HashMap<String, Any>()
@@ -102,6 +103,7 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         editHashMap["amount"] = amount!!
         editHashMap["price"] = price!!
         editHashMap["photo"] = imageUrl
+
 
         if (edit) {
             updateDetails(editHashMap)
@@ -152,7 +154,6 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
             imageUri = data!!.data!!
             binding!!.imageView.setImageURI(imageUri)
-            println("Gpp")
         } else {
             println("Failed $resultCode")
         }
@@ -207,7 +208,7 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
                     binding!!.itemTitle.setText(it.result!!.getString("title"))
                     firebaseUrl = it.result!!.getString("photo")!!
                     if (imageUri == null) {
-                        Glide.with(context!!).load(firebaseUrl).into(binding!!.imageView)
+                        Glide.with(requireContext()).load(firebaseUrl).into(binding!!.imageView)
                     }
                 }
             }

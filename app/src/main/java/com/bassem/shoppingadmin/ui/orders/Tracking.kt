@@ -91,6 +91,10 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                 }
                 "shipped" -> setCurrentStateNumber(StateProgressBar.StateNumber.THREE)
                 "arrived" -> setCurrentStateNumber(StateProgressBar.StateNumber.FOUR)
+                "canceled" -> {
+                    binding!!.trackingBar.visibility = View.GONE
+                    binding!!.updatelayout.visibility = View.GONE
+                }
             }
             sendNotification(name, status)
 
@@ -102,7 +106,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
 
     fun recycleSetup() {
         recyclerView = binding!!.trackingRV
-        orderedAdapter = OrderedItemsAdapter(orderedList, context!!, countList)
+        orderedAdapter = OrderedItemsAdapter(orderedList, requireContext(), countList)
         recyclerView.apply {
             adapter = orderedAdapter
             layoutManager = LinearLayoutManager(context)
@@ -139,6 +143,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                 binding!!.trackAdress.text = address.toString()
                 binding!!.trackPhone.text = phone.toString()
                 tracking(status.toString())
+                binding!!.orderstatus.text = status.toString()
                 binding!!.total.text = total.toString() + " EGP"
                 binding!!.discount.text = "-$discount EGP"
                 binding!!.subTotal.text = "$subtotal EGP"
@@ -181,7 +186,8 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                 if (it.isSuccessful) {
                     tracking(status!!)
                     normal()
-                    Toast.makeText(context!!, "your order is $status now", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "your order is $status now", Toast.LENGTH_LONG)
+                        .show()
                     findNavController().navigateUp()
                 } else {
                     normal()

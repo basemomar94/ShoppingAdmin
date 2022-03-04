@@ -146,6 +146,14 @@
                         </androidx.cardview.widget.CardView>
 
                         <ImageView
+                            android:id="@+id/hide"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
+                            app:srcCompat="@drawable/visible" />
+
+                        <ImageView
                             android:id="@+id/edit"
                             android:layout_width="32dp"
                             android:layout_height="32dp"

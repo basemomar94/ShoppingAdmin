@@ -8,6 +8,8 @@
         <entry key="..\:/ShoppingAdmin/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.3828125" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/drawable/ic_baseline_filter_alt_24.xml" value="0.3828125" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/drawable/ic_baseline_post_add_24.xml" value="0.3828125" />
+        <entry key="..\:/ShoppingAdmin/app/src/main/res/drawable/ic_baseline_visibility_24.xml" value="0.215" />
+        <entry key="..\:/ShoppingAdmin/app/src/main/res/drawable/invisible.xml" value="0.215" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/activity_main.xml" value="0.20520833333333333" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/add_copon.xml" value="0.27445652173913043" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/add_new_item_fragment.xml" value="0.2545289855072464" />
@@ -15,7 +17,7 @@
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/copon_item.xml" value="0.25" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/copons_fragment.xml" value="0.27445652173913043" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/dashboard_fragment.xml" value="0.33" />
-        <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/item.xml" value="0.5784061696658098" />
+        <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/item.xml" value="0.5" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/item_orders.xml" value="0.17831813576494426" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/item_shimmer.xml" value="0.21105072463768115" />
         <entry key="..\:/ShoppingAdmin/app/src/main/res/layout/order_item.xml" value="0.5" />
