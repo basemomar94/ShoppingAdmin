@@ -77,7 +77,11 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
         recycleSetup()
         gettingItems()
         binding!!.confirm.setOnClickListener {
-            updatestatus()
+            if (!status.isNullOrEmpty()) {
+                updatestatus()
+            } else {
+                Toast.makeText(requireContext(), "please choose status update", Toast.LENGTH_SHORT)
+            }
         }
 
 
