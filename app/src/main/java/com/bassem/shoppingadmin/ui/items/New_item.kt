@@ -16,25 +16,26 @@ import com.bassem.shoppingadmin.databinding.AddNewItemFragmentBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 
 class New_item : Fragment(R.layout.add_new_item_fragment) {
-    var _binding: AddNewItemFragmentBinding? = null
-    val binding get() = _binding
+    private var _binding: AddNewItemFragmentBinding? = null
+    private val binding get() = _binding
     private lateinit var db: FirebaseFirestore
     lateinit var title: String
     private var price: String? = null
     private var details: String? = null
-    private var amount: Int? = null
+    private var amount: String? = null
     private var imageUri: Uri? = null
     private lateinit var documentID: String
     private val REQUEST_CODE = 1
     private var detailsMap: HashMap<String, Any>? = null
-    var edit: Boolean = false
-    lateinit var itemId: String
-    var firebaseUrl: String? = null
+    private var edit: Boolean = false
+    private lateinit var itemId: String
+    private var firebaseUrl: String? = null
     private var category: String? = null
 
 
@@ -84,7 +85,6 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
             if (checkedId > -1) {
                 val currentChip = view.findViewById<Chip>(checkedId)
                 category = currentChip.text.toString()
-                println(category)
             }
 
 
@@ -92,43 +92,64 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
 
     }
 
-    fun getDetails(imageUrl: String) {
+    private fun getDetails(imageUrl: String) {
         title = binding!!.itemTitle.text!!.trim().toString()
-        amount = binding!!.itemAmount.text.toString().toInt()
+        amount = binding!!.itemAmount.text.toString()
         price = binding!!.itemPrice.text.toString()
         details = binding!!.itemDetails.text.toString()
+        errorEmpty(title, binding!!.titleLayout)
+        errorEmpty(amount.toString(), binding!!.amountLayout)
+        errorEmpty(price!!, binding!!.priceLayout)
+        errorEmpty(details!!, binding!!.detailsLayout)
         documentID = UUID.randomUUID().toString()
         detailsMap = hashMapOf()
-        detailsMap!!["title"] = title
-        detailsMap!!["amount"] = amount!!
-        detailsMap!!["price"] = price!!
-        detailsMap!!["photo"] = imageUrl
-        detailsMap!!["id"] = documentID
-        detailsMap!!["currentPrice"] = price!!
-        detailsMap!!["details"] = details!!
-        detailsMap!!["visible"] = true
-        detailsMap!!["category"] = category.toString()
-
-        //Edit Hashmap to avoid getting a new id
-        val editHashMap = HashMap<String, Any>()
-        editHashMap["title"] = title
-        editHashMap["amount"] = amount!!
-        editHashMap["price"] = price!!
-        editHashMap["photo"] = imageUrl
 
 
+        if (title.isNotEmpty() && amount.toString()
+                .isNotEmpty() && price!!.isNotEmpty() && details!!.isNotEmpty()
+        ) {
+            detailsMap!!["title"] = title
+            detailsMap!!["amount"] = amount!!.toInt()
+            detailsMap!!["price"] = price!!
+            detailsMap!!["photo"] = imageUrl
+            detailsMap!!["id"] = documentID
+            detailsMap!!["currentPrice"] = price!!
+            detailsMap!!["details"] = details!!
+            detailsMap!!["visible"] = true
+            if (category != null) {
+                detailsMap!!["category"] = category.toString()
+            } else {
+                detailsMap!!["category"] = "null"
 
-        if (edit) {
-            updateDetails(editHashMap)
+            }
+
+            //Edit Hashmap to avoid getting a new id
+            val editHashMap = HashMap<String, Any>()
+            editHashMap["title"] = title
+            editHashMap["amount"] = amount!!.toInt()
+            editHashMap["price"] = price!!
+            editHashMap["photo"] = imageUrl
+            editHashMap["details"] = details!!
+            /*if (category!=null){
+                editHashMap["category"] = category.toString()
+            } else {
+                editHashMap["category"] = "null"
+
+            }*/
+            if (edit) {
+                updateDetails(editHashMap)
+            } else {
+                addItemDetails(detailsMap!!, documentID)
+
+            }
         } else {
-            addItemDetails(detailsMap!!, documentID)
-
+            normal()
         }
 
 
     }
 
-    fun addItemDetails(data: HashMap<String, Any>, id: String) {
+    private fun addItemDetails(data: HashMap<String, Any>, id: String) {
         db = FirebaseFirestore.getInstance()
         db.collection("items").document(id).set(data).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -155,7 +176,7 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         }
     }
 
-    fun pickPhoto() {
+    private fun pickPhoto() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
         startActivityForResult(intent, REQUEST_CODE)
 
@@ -172,36 +193,43 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         }
     }
 
-    fun uploadPhoto() {
+    private fun uploadPhoto() {
         val fileName = UUID.randomUUID().toString() + ".jpg"
-        val storage = FirebaseStorage.getInstance().reference.child("items/$fileName")
-        storage.putFile(imageUri!!).addOnSuccessListener { it ->
-            val reuslt = it.metadata!!.reference!!.downloadUrl
-            reuslt.addOnSuccessListener {
-                val photoUrl = it.toString()
-                getDetails(photoUrl)
+        if (imageUri != null) {
+            val storage = FirebaseStorage.getInstance().reference.child("items/$fileName")
+            storage.putFile(imageUri!!).addOnSuccessListener { it ->
+                val reuslt = it.metadata!!.reference!!.downloadUrl
+                reuslt.addOnSuccessListener {
+                    val photoUrl = it.toString()
+                    getDetails(photoUrl)
+                }
+
+
+            }.addOnFailureListener {
+                Snackbar.make(requireView(), it.message.toString(), Snackbar.LENGTH_LONG).show()
+                normal()
             }
-
-
-        }.addOnFailureListener {
-            Snackbar.make(requireView(), it.message.toString(), Snackbar.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(requireContext(), "please upload item photo", Toast.LENGTH_SHORT).show()
             normal()
+
         }
+
 
     }
 
 
-    fun loading() {
+    private fun loading() {
         binding!!.addBu.visibility = View.INVISIBLE
         binding!!.progressBar.visibility = View.VISIBLE
     }
 
-    fun normal() {
+    private fun normal() {
         binding!!.addBu.visibility = View.VISIBLE
         binding!!.progressBar.visibility = View.GONE
     }
 
-    fun clearFields() {
+    private fun clearFields() {
         binding!!.imageView.setImageResource(R.drawable.photo)
         binding!!.itemPrice.text!!.clear()
         binding!!.itemAmount.text!!.clear()
@@ -211,7 +239,7 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         normal()
     }
 
-    fun fillData() {
+    private fun fillData() {
         if (edit) {
             db = FirebaseFirestore.getInstance()
             db.collection("items").document(itemId).get().addOnCompleteListener {
@@ -225,12 +253,13 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
                     if (imageUri == null) {
                         Glide.with(requireContext()).load(firebaseUrl).into(binding!!.imageView)
                     }
+                    binding!!.itemDetails.setText(it.result!!.getString("details"))
                 }
             }
         }
     }
 
-    fun updateDetails(data: HashMap<String, Any>) {
+    private fun updateDetails(data: HashMap<String, Any>) {
         db = FirebaseFirestore.getInstance()
         db.collection("items").document(itemId).update(data).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -239,6 +268,15 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
             }
         }
 
+    }
+
+    private fun errorEmpty(text: String, layout: TextInputLayout) {
+        if (text.isEmpty()) {
+            layout.error = "*required"
+
+        } else {
+            layout.isErrorEnabled = false
+        }
     }
 
 }
