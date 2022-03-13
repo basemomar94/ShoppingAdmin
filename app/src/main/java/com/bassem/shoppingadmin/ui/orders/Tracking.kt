@@ -164,7 +164,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                 } catch (E: Exception) {
                     println(E.message)
                 }
-                binding!!.trackName.text = name.toString()
+                binding!!.trackName.text = name
                 binding!!.trackAdress.text = address.toString()
                 binding!!.trackPhone.text = phone.toString()
                 tracking(status.toString())
@@ -184,7 +184,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                                     orderedList.add(item)
                                     i++
                                     orderedAdapter.notifyDataSetChanged()
-                                    if (i == (itemsList as List<*>).size) {
+                                    if (i == itemsList.size) {
                                         binding!!.trackLayout.visibility = View.VISIBLE
                                         binding!!.loadingSpinner3.visibility = View.GONE
                                     }
@@ -240,32 +240,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
         }
     }
 
-    fun sendNotification(name: String, update: String) {
 
-        val jsonObject: JSONObject = JSONObject()
-        try {
-            jsonObject.put("to", token)
-            val notification: JSONObject = JSONObject()
-            notification.put("title", "Hello $name")
-            notification.put("body", "Your order is $update")
-            jsonObject.put("notification", notification)
-        } catch (e: JSONException) {
-            println(e.message)
-        }
-
-        val mediaType: MediaType = MediaType.parse("application/json")
-        val client: OkHttpClient = OkHttpClient()
-        var body: RequestBody = RequestBody.create(mediaType, jsonObject.toString())
-        val request: Request? =
-            Request.Builder().url("https://fcm.googleapis.com/fcm/send").method("POST", body)
-                .addHeader("Authorization", servertoken)
-                .addHeader("Content-Type", "application/json").build()
-        Thread(Runnable {
-            val response: Response = client.newCall(request).execute()
-            println("response=========================================${response.message()}")
-        }).start()
-
-    }
 
     private fun sendFCM() {
         val map = HashMap<String, String>()
