@@ -35,9 +35,10 @@
 
                 <TextView
                     android:id="@+id/coponName"
-                    android:layout_width="150dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
+                    android:layout_weight=".4"
                     android:text="firsttime"
                     android:textColor="@color/orange"
                     android:textSize="20sp"
@@ -45,9 +46,10 @@
 
                 <TextView
                     android:id="@+id/usersCount"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
+                    android:layout_weight=".5"
                     android:text="20 users "
                     android:textColor="@color/gray"
                     android:textSize="14sp"

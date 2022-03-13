@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bassem.shoppingadmin.R
@@ -43,30 +44,11 @@ class Dashboard : Fragment(R.layout.dashboard_fragment) {
         binding!!.coponsCard.setOnClickListener {
             findNavController().navigate(R.id.action_dashboard_to_coponsFragment)
         }
-        total_Items()
-        total_Users()
+
         newOrders()
-    }
-
-    fun total_Items() {
-        db = FirebaseFirestore.getInstance()
-        db.collection("items").get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                val total = it.result!!.size()
-                binding!!.totalItems.text = total.toString()
-            }
-        }
-
-    }
-
-    fun total_Users() {
-        db = FirebaseFirestore.getInstance()
-        db.collection("users").get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                val total = it.result!!.size()
-                binding!!.totalUsers.text = total.toString()
-            }
-        }
+        getTotal("items", binding!!.totalItems)
+        getTotal("users", binding!!.totalUsers)
+        getTotal("coupons", binding!!.totalcoupons)
     }
 
     fun newOrders() {
@@ -75,6 +57,16 @@ class Dashboard : Fragment(R.layout.dashboard_fragment) {
             if (it.isSuccessful) {
                 val total = it.result!!.size()
                 binding!!.newOrders.text = total.toString()
+            }
+        }
+    }
+
+    fun getTotal(subj: String, textView: TextView) {
+        db = FirebaseFirestore.getInstance()
+        db.collection(subj).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val total = it.result!!.size()
+                textView.text = total.toString()
             }
         }
     }

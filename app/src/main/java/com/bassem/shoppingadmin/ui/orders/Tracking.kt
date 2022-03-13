@@ -27,18 +27,18 @@ import retrofit2.Call
 import retrofit2.Callback
 
 class Tracking : Fragment(R.layout.tracking_fragment) {
-    var _binding: TrackingFragmentBinding? = null
-    val binding get() = _binding
-    lateinit var recyclerView: RecyclerView
-    lateinit var orderedList: MutableList<OrderedItem>
-    lateinit var orderedAdapter: OrderedItemsAdapter
-    lateinit var countList: MutableList<String>
-    lateinit var db: FirebaseFirestore
-    var orderID: String? = null
-    var status: String? = null
-    lateinit var token: String
-    lateinit var name: String
-    val servertoken: String =
+    private var _binding: TrackingFragmentBinding? = null
+    private val binding get() = _binding
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var orderedList: MutableList<OrderedItem>
+    private lateinit var orderedAdapter: OrderedItemsAdapter
+    private lateinit var countList: MutableList<String>
+    private lateinit var db: FirebaseFirestore
+    private var orderID: String? = null
+    private var status: String? = null
+    private lateinit var token: String
+    private lateinit var name: String
+    private val servertoken: String =
         "key=AAAA8wp6gvE:APA91bGkhZC4jPFfmqTiExrbYIi8-hdgqq1W9cC7EC0CMGRUM37o0a36nez9cQI4LKgNQ2Pc1VrBhL9Y04koZsZ97JCXnrctVYmYiI3LUYWZ2egnLHoxgnOGVn2wJmv_Xv0VU2ynnvGN"
 
 
@@ -83,7 +83,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
 
     }
 
-    fun tracking(status: String) {
+    private fun tracking(status: String) {
         val track = binding!!.trackingBar
         track.apply {
             stateDescriptionData.add(0, "Pending")
@@ -125,7 +125,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
 
     }
 
-    fun recycleSetup() {
+    private fun recycleSetup() {
         recyclerView = binding!!.trackingRV
         orderedAdapter = OrderedItemsAdapter(orderedList, requireContext(), countList)
         recyclerView.apply {
@@ -135,7 +135,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
         }
     }
 
-    fun gettingItems() {
+    private fun gettingItems() {
         db = FirebaseFirestore.getInstance()
         db.collection("orders").document(orderID!!).get().addOnCompleteListener {
             if (it.isSuccessful) {
@@ -199,7 +199,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
 
     }
 
-    fun updatestatus() {
+    private fun updatestatus() {
         loading()
         db = FirebaseFirestore.getInstance()
         db.collection("orders").document(orderID!!).update("status", status)
@@ -216,18 +216,18 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
             }
     }
 
-    fun loading() {
+    private fun loading() {
         binding!!.confirm.visibility = View.GONE
         binding!!.progressBar2.visibility = View.VISIBLE
     }
 
-    fun normal() {
+    private fun normal() {
         binding!!.confirm.visibility = View.VISIBLE
         binding!!.progressBar2.visibility = View.GONE
     }
 
-    // to decrease items from the total amount of items
-    fun sub_item() {
+    // to decrease sold items from the total amount of items
+    private fun sub_item() {
         db = FirebaseFirestore.getInstance()
         orderedList.zip(countList).forEach { pair ->
             db.collection("items").document(pair.first.id!!)
@@ -263,7 +263,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
 
     }
 
-    fun sendFCM() {
+    private fun sendFCM() {
         val map = HashMap<String, String>()
         map["to"] = token
         map["title"] = "hello"
@@ -274,7 +274,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                 call: Call<JsonObject?>,
                 response: retrofit2.Response<JsonObject?>
             ) {
-              println(response.code().toString() + "  $token")
+                println(response.code().toString() + "  $token")
             }
 
             override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
