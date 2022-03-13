@@ -12,15 +12,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.adapters.OrderedItemsAdapter
+import com.bassem.shoppingadmin.api.FCM
 import com.bassem.shoppingadmin.databinding.TrackingFragmentBinding
 import com.bassem.shoppingadmin.models.OrderedItem
 import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.JsonObject
 import com.kofigyan.stateprogressbar.StateProgressBar
 import com.squareup.okhttp.*
 import org.json.JSONException
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
 
 class Tracking : Fragment(R.layout.tracking_fragment) {
     var _binding: TrackingFragmentBinding? = null
@@ -34,6 +38,9 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
     var status: String? = null
     lateinit var token: String
     lateinit var name: String
+    val servertoken: String =
+        "key=AAAA8wp6gvE:APA91bGkhZC4jPFfmqTiExrbYIi8-hdgqq1W9cC7EC0CMGRUM37o0a36nez9cQI4LKgNQ2Pc1VrBhL9Y04koZsZ97JCXnrctVYmYiI3LUYWZ2egnLHoxgnOGVn2wJmv_Xv0VU2ynnvGN"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,19 +91,33 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
             stateDescriptionData.add(2, "Shipped")
             stateDescriptionData.add(3, "Arrived")
             when (status) {
-                "pending" -> setCurrentStateNumber(StateProgressBar.StateNumber.ONE)
+                "pending" -> {
+                    setCurrentStateNumber(StateProgressBar.StateNumber.ONE)
+                    binding!!.cancelOrder.visibility = View.VISIBLE
+                }
                 "confirmed" -> {
                     setCurrentStateNumber(StateProgressBar.StateNumber.TWO)
+                    binding!!.cancelOrder.visibility = View.VISIBLE
                     sub_item()
+
+
                 }
-                "shipped" -> setCurrentStateNumber(StateProgressBar.StateNumber.THREE)
-                "arrived" -> setCurrentStateNumber(StateProgressBar.StateNumber.FOUR)
+                "shipped" -> {
+                    setCurrentStateNumber(StateProgressBar.StateNumber.THREE)
+                    binding!!.cancelOrder.visibility = View.GONE
+
+                }
+                "arrived" -> {
+                    setCurrentStateNumber(StateProgressBar.StateNumber.FOUR)
+                    binding!!.cancelOrder.visibility = View.GONE
+
+                }
                 "canceled" -> {
                     binding!!.trackingBar.visibility = View.GONE
-                    binding!!.updatelayout.visibility = View.GONE
                 }
             }
-            sendNotification(name, status)
+            //sendNotification(name, status)
+            sendFCM()
 
 
         }
@@ -216,14 +237,11 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
     }
 
     fun sendNotification(name: String, update: String) {
-        val servertoken: String =
-            "key=AAAA8wp6gvE:APA91bGkhZC4jPFfmqTiExrbYIi8-hdgqq1W9cC7EC0CMGRUM37o0a36nez9cQI4LKgNQ2Pc1VrBhL9Y04koZsZ97JCXnrctVYmYiI3LUYWZ2egnLHoxgnOGVn2wJmv_Xv0VU2ynnvGN"
 
         val jsonObject: JSONObject = JSONObject()
         try {
             jsonObject.put("to", token)
             val notification: JSONObject = JSONObject()
-
             notification.put("title", "Hello $name")
             notification.put("body", "Your order is $update")
             jsonObject.put("notification", notification)
@@ -243,6 +261,26 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
             println("response=========================================${response.message()}")
         }).start()
 
+    }
+
+    fun sendFCM() {
+        val map = HashMap<String, String>()
+        map["to"] = token
+        map["title"] = "hello"
+        map["body"] = "test"
+        val call = FCM.create().sendNotification(map)
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(
+                call: Call<JsonObject?>,
+                response: retrofit2.Response<JsonObject?>
+            ) {
+              println(response.code().toString() + "  $token")
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                println(t.message + "error")
+            }
+        })
     }
 
 

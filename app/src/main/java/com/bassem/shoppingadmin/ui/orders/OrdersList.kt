@@ -18,16 +18,16 @@ import com.google.firebase.firestore.Query
 
 class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clickInterface,
     SearchView.OnQueryTextListener, MenuItem.OnMenuItemClickListener {
-    lateinit var recyclerView: RecyclerView
-    lateinit var orderAdapter: OrdersRecycleAdapter
-    lateinit var orderList: MutableList<OrderClass>
-    var _binding: OrdersFragmentBinding? = null
-    val binding get() = _binding
-    lateinit var db: FirebaseFirestore
-    var itemsOrusersOrders = 0
-    var userId: String? = null
-    var itemId: String? = null
-    var isChipHidden = true
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var orderAdapter: OrdersRecycleAdapter
+    private lateinit var orderList: MutableList<OrderClass>
+    private var _binding: OrdersFragmentBinding? = null
+    private val binding get() = _binding
+    private lateinit var db: FirebaseFirestore
+    private var itemsOrusersOrders = 0
+    private var userId: String? = null
+    private var itemId: String? = null
+    private var isChipHidden = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,9 +115,9 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
     }
 
 
-    fun recycleSetup() {
+    private fun recycleSetup() {
         orderAdapter = OrdersRecycleAdapter(orderList, this)
-        recyclerView = view!!.findViewById(R.id.ordersRV)
+        recyclerView = requireView().findViewById(R.id.ordersRV)
         recyclerView.apply {
             adapter = orderAdapter
             layoutManager = LinearLayoutManager(context)
@@ -130,12 +130,13 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
     override fun click(position: Int, order_id: String) {
         val bundle = Bundle()
         bundle.putString("order", order_id)
-        val navController = Navigation.findNavController(activity!!, R.id.fragmentContainerView)
+        val navController =
+            Navigation.findNavController(requireActivity(), R.id.fragmentContainerView)
         navController.navigate(R.id.action_ordersList_to_tracking, bundle)
 
     }
 
-    fun getOrders() {
+    private fun getOrders() {
         db = FirebaseFirestore.getInstance()
         db.collection("orders")
             .orderBy("order_date", Query.Direction.DESCENDING).get().addOnCompleteListener {
@@ -190,7 +191,7 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
             }
     }
 
-    fun getSingleItemOrders(item: String) {
+    private fun getSingleItemOrders(item: String) {
         println("Inside fun")
         db = FirebaseFirestore.getInstance()
         db.collection("orders")
@@ -225,7 +226,7 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
 
     }
 
-    fun filterOrders(filter: String, chip: Chip) {
+    private fun filterOrders(filter: String, chip: Chip) {
         val filterList: MutableList<OrderClass> = arrayListOf()
         for (order in orderList) {
             if (order.status == filter || order.order_id!!.lowercase().contains(filter)) {

@@ -57,7 +57,7 @@ class CouponsFragment : Fragment(R.layout.copons_fragment), CouponsAdapter.onCli
         recyclerView.apply {
             adapter = couponsAdapter
             setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(context!!)
+            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
@@ -77,27 +77,20 @@ class CouponsFragment : Fragment(R.layout.copons_fragment), CouponsAdapter.onCli
     }
 
 
-    override fun switchOn(item: String, position: Int) {
-        couponsAdapter.notifyItemChanged(position)
-        val status = couponsList[position].valid
-        println(status)
-        changeActiviation(item, true)
+    override fun deleteCoupon(item: String, coupon: CouponsClass, position: Int) {
+        couponsList.remove(coupon)
+        couponsAdapter.notifyItemRemoved(position)
+        deleteCoupon(item)
+
 
     }
 
-    override fun switchOFF(item: String, position: Int) {
-        couponsAdapter.notifyItemChanged(position)
-        val status = couponsList[position].valid
-        println(status)
-        changeActiviation(item, false)
-    }
 
-    fun changeActiviation(item: String, status: Boolean) {
-        db.collection("coupons").document(item).update("valid", status).addOnCompleteListener {
+    fun deleteCoupon(item: String) {
+        db.collection("coupons").document(item).delete().addOnCompleteListener {
             if (it.isSuccessful) {
-                Toast.makeText(requireContext(), "coupon is updated", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "coupon is deleted", Toast.LENGTH_SHORT).show()
             }
         }
-
     }
 }

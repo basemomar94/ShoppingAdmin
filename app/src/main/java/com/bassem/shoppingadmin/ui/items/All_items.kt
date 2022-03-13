@@ -13,18 +13,20 @@ import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.adapters.ItemsAdapter
 import com.bassem.shoppingadmin.databinding.AllItemsFragmentBinding
 import com.bassem.shoppingadmin.models.ItemClass
+import com.google.android.material.chip.Chip
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
-import java.util.*
 
 class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
-    SearchView.OnQueryTextListener {
-    var _binding: AllItemsFragmentBinding? = null
-    val binding get() = _binding
-    lateinit var recyclerView: RecyclerView
-    lateinit var itemsAdapter: ItemsAdapter
-    lateinit var itemsList: MutableList<ItemClass>
-    lateinit var db: FirebaseFirestore
+    SearchView.OnQueryTextListener, MenuItem.OnMenuItemClickListener {
+    private var _binding: AllItemsFragmentBinding? = null
+    private val binding get() = _binding
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var itemsAdapter: ItemsAdapter
+    private lateinit var itemsList: MutableList<ItemClass>
+    private lateinit var db: FirebaseFirestore
+    private var isChipHidden = true
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,7 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
         val filter = menu.findItem(R.id.appbarFilter)
         val SearchView = search.actionView as SearchView
         SearchView.setOnQueryTextListener(this)
+        filter.setOnMenuItemClickListener(this)
     }
 
     override fun onCreateView(
@@ -61,6 +64,25 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
             itemsList.clear()
             gettingData()
         }
+        binding!!.chipButtons.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId > -1) {
+                when (view.findViewById<Chip>(checkedId).text) {
+                    "hidden" -> displayHidenItems()
+                    "sold" -> displaySold()
+                    "men" -> displayMenWomen("male")
+                    "women" -> displayMenWomen("female")
+
+
+                }
+            } else {
+                isChipHidden = true
+                binding!!.chipButtons.visibility = View.GONE
+                itemsAdapter.filter(itemsList)
+                itemsAdapter.notifyDataSetChanged()
+
+            }
+
+        }
 
 
         binding!!.floatingActionButton.setOnClickListener {
@@ -69,8 +91,20 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
 
     }
 
+    private fun displayMenWomen(category: String) {
+        val catogeryList: MutableList<ItemClass>
+        catogeryList = arrayListOf()
+        itemsList.forEach {
+            if (it.category == category) {
+                catogeryList.add(it)
+            }
+        }
+        itemsAdapter.filter(catogeryList)
 
-    fun recycleSetup() {
+    }
+
+
+    private fun recycleSetup() {
         itemsAdapter = ItemsAdapter(itemsList, this, requireContext())
         recyclerView = requireView().findViewById(R.id.all_items_RV)
         recyclerView.apply {
@@ -80,7 +114,7 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
         }
     }
 
-    fun gettingData() {
+    private fun gettingData() {
         db = FirebaseFirestore.getInstance()
         db.collection("items").get().addOnCompleteListener {
             if (it.isSuccessful) {
@@ -138,14 +172,14 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
     override fun hide(position: Int, itemId: String, item: ItemClass, shown: Boolean) {
         item.visible = !item.visible!!
         if (shown) {
-            showHideItem(itemId, false)
+            showOrhide(itemId, false)
         } else {
-            showHideItem(itemId, true)
+            showOrhide(itemId, true)
         }
         itemsAdapter.notifyItemChanged(position)
     }
 
-    private fun showHideItem(itemId: String, status: Boolean) {
+    private fun showOrhide(itemId: String, status: Boolean) {
         db.collection("items").document(itemId).update("visible", status).addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(requireContext(), "item is updated", Toast.LENGTH_SHORT).show()
@@ -154,13 +188,12 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
     }
 
 
-    fun stopShimmer() {
+    private fun stopShimmer() {
         binding!!.shimmerLayout.visibility = View.GONE
         binding!!.allItemsLayout.visibility = View.VISIBLE
     }
 
-    fun filterItems(filter: String) {
-
+    private fun searchbyName(filter: String) {
         val filterList: MutableList<ItemClass> = arrayListOf()
         itemsList.forEach {
             println("$filter ============== ${it.title}")
@@ -178,8 +211,45 @@ class All_items : Fragment(R.layout.all_items_fragment), ItemsAdapter.action,
     }
 
     override fun onQueryTextChange(p0: String?): Boolean {
-        filterItems(p0.toString().lowercase())
+        searchbyName(p0.toString().lowercase())
         return true
     }
+
+    override fun onMenuItemClick(p0: MenuItem?): Boolean {
+        if (isChipHidden) {
+            binding!!.chipButtons.visibility = View.VISIBLE
+            isChipHidden = false
+
+        } else {
+            binding!!.chipButtons.visibility = View.GONE
+            isChipHidden = true
+
+        }
+
+        return true
+    }
+
+    private fun displayHidenItems() {
+        val hiddenList: MutableList<ItemClass>
+        hiddenList = arrayListOf()
+        itemsList.forEach {
+            if (!it.visible!!) {
+                hiddenList.add(it)
+            }
+        }
+        itemsAdapter.filter(hiddenList)
+    }
+
+    private fun displaySold() {
+        val soldList: MutableList<ItemClass>
+        soldList = arrayListOf()
+        itemsList.forEach {
+            if (it.amount!! <= 0) {
+                soldList.add(it)
+            }
+        }
+        itemsAdapter.filter(soldList)
+    }
+
 
 }

@@ -40,7 +40,7 @@ class NewCoupon : Fragment(R.layout.add_copon) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding!!.coponValid.setOnClickListener {
-            val dialog = DatePickerDialog(context!!)
+            val dialog = DatePickerDialog(requireContext())
             dialog.setOnDateSetListener(DatePickerDialog.OnDateSetListener { _, Y, M, D ->
 
                 validtyDate = "$D-$M-$Y"
@@ -51,6 +51,7 @@ class NewCoupon : Fragment(R.layout.add_copon) {
         }
         binding!!.addcoupon.setOnClickListener {
             val idCoupon = UUID.randomUUID().toString()
+            println(idCoupon)
             addCopton(getInputs(idCoupon), idCoupon)
         }
 
@@ -60,14 +61,14 @@ class NewCoupon : Fragment(R.layout.add_copon) {
     fun getInputs(randomId: String): HashMap<String, Any> {
         val title = binding!!.coponKey.text.toString().lowercase().trim()
         val amount = binding!!.coponAmount.text.toString().trim().toInt()
-        val maxUsers = binding!!.coponMax.text.toString().lowercase().trim().toInt()
-        val expireDate = binding!!.validityDate.text.toString().trim()
+       // val maxUsers = binding!!.coponMax.text.toString().lowercase().trim().toInt()
+       // val expireDate = binding!!.validityDate.text.toString().trim()
         val dataHashMap: HashMap<String, Any> = hashMapOf()
         val ordersList = arrayListOf<String>()
         dataHashMap["title"] = title
         dataHashMap["amount"] = amount
-        dataHashMap["maxUsers"] = maxUsers
-        dataHashMap["expireDate"] = expireDate
+       // dataHashMap["maxUsers"] = maxUsers
+       // dataHashMap["expireDate"] = expireDate
         dataHashMap["valid"] = true
         dataHashMap["usingCount"] = 0
         dataHashMap["orders"] = ordersList

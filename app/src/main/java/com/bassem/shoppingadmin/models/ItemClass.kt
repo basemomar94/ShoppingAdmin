@@ -6,6 +6,7 @@ data class ItemClass(
     val price: String? = null,
     val amount: Int? = null,
     val id: String? = null,
-    var visible: Boolean? = null
+    var visible: Boolean? = null,
+    var category: String? = null
 
 )

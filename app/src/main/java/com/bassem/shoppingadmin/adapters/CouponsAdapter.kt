@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.models.CouponsClass
-import kotlinx.android.synthetic.main.item.view.*
 
 class CouponsAdapter(
     var couponsList: MutableList<CouponsClass>,
@@ -22,18 +22,17 @@ class CouponsAdapter(
         val switch = itemView.findViewById<Switch>(R.id.switch1)
         val name = itemView.findViewById<TextView>(R.id.coponName)
         val usersCount = itemView.findViewById<TextView>(R.id.usersCount)
+        val delete = itemView.findViewById<ImageView>(R.id.deleteCoupon)
 
         init {
-            switch.setOnClickListener {
+            delete.setOnClickListener {
                 val position = adapterPosition
-                val coupon = couponsList[position].id
-                switch.setOnClickListener {
-                    if (switch.isChecked) {
-                        listner.switchOFF(coupon!!, position)
-                    } else {
-                        listner.switchOn(coupon!!, position)
-                    }
-                }
+                val coupon = couponsList[position]
+                val item = coupon.id
+                println(item + coupon + position)
+
+                listner.deleteCoupon(item!!, coupon, position)
+
             }
 
         }
@@ -49,7 +48,7 @@ class CouponsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val coupon = couponsList[position]
         holder.name.text = coupon.title
-        holder.usersCount.text = coupon.usingCount.toString()
+        holder.usersCount.text = "${coupon.amount} discount"
         if (coupon.valid!!) {
             holder.switch.isChecked = true
             holder.switch.text = "Active"
@@ -66,8 +65,7 @@ class CouponsAdapter(
     }
 
     interface onClickinterface {
-        fun switchOn(item: String, position: Int)
-        fun switchOFF(item: String, position: Int)
+        fun deleteCoupon(item: String, coupon: CouponsClass, position: Int)
 
 
     }

@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.databinding.AddNewItemFragmentBinding
 import com.bumptech.glide.Glide
+import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -34,6 +35,7 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
     var edit: Boolean = false
     lateinit var itemId: String
     var firebaseUrl: String? = null
+    private var category: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +80,15 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         binding!!.addImage.setOnClickListener {
             pickPhoto()
         }
+        binding!!.categoryChips.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId > -1) {
+                val currentChip = view.findViewById<Chip>(checkedId)
+                category = currentChip.text.toString()
+                println(category)
+            }
+
+
+        }
 
     }
 
@@ -94,8 +105,9 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         detailsMap!!["photo"] = imageUrl
         detailsMap!!["id"] = documentID
         detailsMap!!["currentPrice"] = price!!
-        detailsMap!!["details"]=details!!
+        detailsMap!!["details"] = details!!
         detailsMap!!["visible"] = true
+        detailsMap!!["category"] = category.toString()
 
         //Edit Hashmap to avoid getting a new id
         val editHashMap = HashMap<String, Any>()
@@ -103,6 +115,7 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         editHashMap["amount"] = amount!!
         editHashMap["price"] = price!!
         editHashMap["photo"] = imageUrl
+
 
 
         if (edit) {
@@ -193,6 +206,8 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
         binding!!.itemPrice.text!!.clear()
         binding!!.itemAmount.text!!.clear()
         binding!!.itemTitle.text!!.clear()
+        binding!!.categoryChips.clearCheck()
+        binding!!.itemDetails.text!!.clear()
         normal()
     }
 
