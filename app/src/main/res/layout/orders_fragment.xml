@@ -7,20 +7,25 @@
     android:orientation="vertical"
     tools:context=".ui.orders.OrdersList">
 
-    <ProgressBar
+    <FrameLayout
         android:id="@+id/loadingSpinner4"
-        style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|center_vertical"
-        android:indeterminateTint="@color/orange" />
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_vertical"
+            android:indeterminateTint="@color/orange" />
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/ordersLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipButtons"

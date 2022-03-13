@@ -51,7 +51,7 @@ class CouponsFragment : Fragment(R.layout.copons_fragment), CouponsAdapter.onCli
 
     }
 
-    fun recycleviewSetup() {
+    private fun recycleviewSetup() {
         recyclerView = binding!!.coyponsRv
         couponsAdapter = CouponsAdapter(couponsList, this)
         recyclerView.apply {
@@ -61,7 +61,7 @@ class CouponsFragment : Fragment(R.layout.copons_fragment), CouponsAdapter.onCli
         }
     }
 
-    fun gettingCoupons() {
+    private fun gettingCoupons() {
         db = FirebaseFirestore.getInstance()
         db.collection("coupons").get().addOnCompleteListener {
             if (it.isSuccessful) {
@@ -72,6 +72,7 @@ class CouponsFragment : Fragment(R.layout.copons_fragment), CouponsAdapter.onCli
                         couponsAdapter.notifyDataSetChanged()
                     }
                 }
+                normal()
             }
         }
     }
@@ -86,11 +87,21 @@ class CouponsFragment : Fragment(R.layout.copons_fragment), CouponsAdapter.onCli
     }
 
 
-    fun deleteCoupon(item: String) {
+    private fun deleteCoupon(item: String) {
         db.collection("coupons").document(item).delete().addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(requireContext(), "coupon is deleted", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun loading() {
+        binding!!.coyponsRv.visibility = View.GONE
+        binding!!.loadingSpinner2.visibility = View.VISIBLE
+    }
+
+    private fun normal() {
+        binding!!.coyponsRv.visibility = View.VISIBLE
+        binding!!.loadingSpinner2.visibility = View.GONE
     }
 }
