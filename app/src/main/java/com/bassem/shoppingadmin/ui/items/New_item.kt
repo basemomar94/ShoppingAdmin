@@ -270,7 +270,7 @@ class New_item : Fragment(R.layout.add_new_item_fragment) {
 
     }
 
-    private fun errorEmpty(text: String, layout: TextInputLayout) {
+     fun errorEmpty(text: String, layout: TextInputLayout) {
         if (text.isEmpty()) {
             layout.error = "*required"
 

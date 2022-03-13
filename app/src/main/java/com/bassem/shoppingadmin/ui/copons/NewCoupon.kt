@@ -12,15 +12,16 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bassem.shoppingadmin.R
 import com.bassem.shoppingadmin.databinding.AddCoponBinding
+import com.bassem.shoppingadmin.ui.items.New_item
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import kotlin.collections.HashMap
 
 class NewCoupon : Fragment(R.layout.add_copon) {
-    var _binding: AddCoponBinding? = null
-    val binding get() = _binding
-    var validtyDate: String? = null
-    lateinit var db: FirebaseFirestore
+    private var _binding: AddCoponBinding? = null
+    private val binding get() = _binding
+    private var validityDate: String? = null
+    private lateinit var db: FirebaseFirestore
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db = FirebaseFirestore.getInstance()
@@ -31,7 +32,7 @@ class NewCoupon : Fragment(R.layout.add_copon) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = AddCoponBinding.inflate(inflater, container, false)
         return binding!!.root
     }
@@ -41,34 +42,40 @@ class NewCoupon : Fragment(R.layout.add_copon) {
         super.onViewCreated(view, savedInstanceState)
         binding!!.coponValid.setOnClickListener {
             val dialog = DatePickerDialog(requireContext())
-            dialog.setOnDateSetListener(DatePickerDialog.OnDateSetListener { _, Y, M, D ->
+            dialog.setOnDateSetListener { _, Y, M, D ->
 
-                validtyDate = "$D-$M-$Y"
-                binding!!.validityDate.text = validtyDate
+                validityDate = "$D-$M-$Y"
+                binding!!.validityDate.text = validityDate
 
-            })
+            }
             dialog.show()
         }
         binding!!.addcoupon.setOnClickListener {
             val idCoupon = UUID.randomUUID().toString()
             println(idCoupon)
-            addCopton(getInputs(idCoupon), idCoupon)
+            addCoupons(getInputs(idCoupon), idCoupon)
         }
 
 
     }
 
-    fun getInputs(randomId: String): HashMap<String, Any> {
+    private fun getInputs(randomId: String): HashMap<String, Any> {
+
         val title = binding!!.coponKey.text.toString().lowercase().trim()
-        val amount = binding!!.coponAmount.text.toString().trim().toInt()
-       // val maxUsers = binding!!.coponMax.text.toString().lowercase().trim().toInt()
-       // val expireDate = binding!!.validityDate.text.toString().trim()
+        val amount = binding!!.coponAmount.text.toString().trim()
+        // val maxUsers = binding!!.coponMax.text.toString().lowercase().trim().toInt()
+        // val expireDate = binding!!.validityDate.text.toString().trim()
+        New_item().errorEmpty(title, binding!!.couponTlayout)
+        New_item().errorEmpty(amount, binding!!.couponVlayout)
         val dataHashMap: HashMap<String, Any> = hashMapOf()
         val ordersList = arrayListOf<String>()
         dataHashMap["title"] = title
-        dataHashMap["amount"] = amount
-       // dataHashMap["maxUsers"] = maxUsers
-       // dataHashMap["expireDate"] = expireDate
+        if (amount.isNotEmpty()){
+            dataHashMap["amount"] = amount.toInt()
+
+        }
+        // dataHashMap["maxUsers"] = maxUsers
+        // dataHashMap["expireDate"] = expireDate
         dataHashMap["valid"] = true
         dataHashMap["usingCount"] = 0
         dataHashMap["orders"] = ordersList
@@ -77,26 +84,36 @@ class NewCoupon : Fragment(R.layout.add_copon) {
 
     }
 
-    fun addCopton(data: HashMap<String, Any>, randomId: String) {
+    private fun addCoupons(data: HashMap<String, Any>, randomId: String) {
         loading()
-        db.collection("coupons").document(randomId).set(data).addOnCompleteListener {
-            if (it.isSuccessful) {
-                Toast.makeText(requireContext(), "Coupon is added", Toast.LENGTH_SHORT).show()
-                findNavController().navigateUp()
-            } else {
-                normal()
+        if (binding!!.coponKey.text!!.isNotEmpty() && binding!!.coponAmount.text!!.isNotEmpty()) {
+            db.collection("coupons").document(randomId).set(data).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Toast.makeText(requireContext(), "Coupon is added", Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                } else {
+                    normal()
+                    Toast.makeText(
+                        requireContext(),
+                        it.exception?.message.toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
 
+                }
             }
+        } else {
+            normal()
         }
+
 
     }
 
-    fun loading() {
+    private fun loading() {
         binding!!.addcoupon.visibility = View.GONE
         binding!!.progressBar3.visibility = View.VISIBLE
     }
 
-    fun normal() {
+    private fun normal() {
         binding!!.addcoupon.visibility = View.VISIBLE
         binding!!.progressBar3.visibility = View.GONE
     }
